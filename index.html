@@ -282,6 +282,10 @@
             });
         }
     </script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="firebase-config.js"></script>
 </head>
 <body class="min-h-screen">
     <!-- Google Tag Manager (noscript) -->
@@ -708,6 +712,18 @@
                 
                 <form id="admin-login-form" class="space-y-4">
                     <div>
+                        <label for="admin-email" class="block text-sm font-semibold text-gray-800 mb-2">이메일</label>
+                        <input 
+                            type="email" 
+                            id="admin-email" 
+                            name="email" 
+                            required 
+                            class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 transition-all"
+                            placeholder="관리자 이메일을 입력하세요"
+                            autocomplete="email"
+                        >
+                    </div>
+                    <div>
                         <label for="admin-password" class="block text-sm font-semibold text-gray-800 mb-2">비밀번호</label>
                         <input 
                             type="password" 
@@ -715,13 +731,13 @@
                             name="password" 
                             required 
                             class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 transition-all"
-                            placeholder="관리자 비밀번호를 입력하세요"
+                            placeholder="비밀번호를 입력하세요"
                             autocomplete="current-password"
                         >
                     </div>
                     
                     <div id="login-error" class="text-red-600 text-sm hidden">
-                        비밀번호가 올바르지 않습니다.
+                        이메일 또는 비밀번호가 올바르지 않습니다.
                     </div>
                     
                     <button type="submit" class="w-full bg-brand-blue text-white py-3 px-6 rounded-lg hover:bg-brand-green transition-all duration-300 font-semibold">
@@ -894,16 +910,13 @@
         const adminLoginForm = document.getElementById('admin-login-form');
         const loginError = document.getElementById('login-error');
         
-        // 관리자 비밀번호 (실제 운영에서는 더 안전한 방법 사용 권장)
-        const ADMIN_PASSWORD = 'sustainx2024!';
-        
         // 관리자 링크 클릭 (저작권 표시를 클릭하면 로그인 모달 열리기)
         adminLink.addEventListener('click', (e) => {
             e.preventDefault();
             adminLoginModal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
-            // 비밀번호 입력 필드에 포커스
-            document.getElementById('admin-password').focus();
+            // 이메일 입력 필드에 포커스
+            document.getElementById('admin-email').focus();
         });
         
         // 관리자 로그인 모달 닫기
@@ -924,29 +937,38 @@
             }
         });
         
-        // 관리자 로그인 처리
-        adminLoginForm.addEventListener('submit', (e) => {
+        // 관리자 로그인 처리 (Firebase Auth 사용)
+        adminLoginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            const email = document.getElementById('admin-email').value;
             const password = document.getElementById('admin-password').value;
             
-            if (password === ADMIN_PASSWORD) {
-                // 로그인 성공
-                localStorage.setItem('adminLoggedIn', 'true');
-                localStorage.setItem('adminLoginTime', new Date().getTime().toString());
+            try {
+                // Firebase Authentication으로 로그인
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                console.log('Firebase Auth 로그인 성공:', userCredential.user.email);
                 
-                // 관리자 페이지로 이동
+                // 로그인 성공 시 관리자 페이지로 이동
+                adminLoginModal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
                 window.location.href = 'admin.html';
-            } else {
-                // 로그인 실패
-                loginError.classList.remove('hidden');
-                document.getElementById('admin-password').value = '';
-                document.getElementById('admin-password').focus();
                 
-                // 3초 후 에러 메시지 숨기기
+            } catch (error) {
+                // 로그인 실패
+                console.error('Firebase Auth 로그인 실패:', error.message);
+                loginError.textContent = '이메일 또는 비밀번호가 올바르지 않습니다.';
+                loginError.classList.remove('hidden');
+                
+                // 입력 필드 초기화 및 포커스
+                document.getElementById('admin-email').value = '';
+                document.getElementById('admin-password').value = '';
+                document.getElementById('admin-email').focus();
+                
+                // 5초 후 에러 메시지 숨기기
                 setTimeout(() => {
                     loginError.classList.add('hidden');
-                }, 3000);
+                }, 5000);
             }
         });
         
@@ -997,14 +1019,11 @@
             }
         });
 
-        // 문의 접수 처리
+        // 문의 접수 처리 (Firestore 연동)
         inquiryForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
             const formData = new FormData(inquiryForm);
             const inquiry = {
-                id: Date.now().toString(),
-                timestamp: new Date().toISOString(),
                 company: formData.get('company'),
                 name: formData.get('name'),
                 email: formData.get('email'),
@@ -1013,29 +1032,14 @@
                 industry: formData.get('industry'),
                 concern: formData.get('concern'),
                 consultationTime: formData.get('consultationTime'),
-                status: 'new'
+                status: 'new',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
             };
-
             try {
-                // 로칼 스토리지에 저장
-                const existingInquiries = JSON.parse(localStorage.getItem('inquiries') || '[]');
-                existingInquiries.push(inquiry);
-                localStorage.setItem('inquiries', JSON.stringify(existingInquiries));
-
-                // 콘솔에 로그 출력 (개발자가 확인할 수 있도록)
-                console.log('새로운 문의 접수:', inquiry);
-                console.log('전체 문의 목록:', existingInquiries);
-
-                // 이메일 전송 시뮤레이션 (EmailJS 등을 사용하여 실제 이메일 전송 가능)
-                await sendEmailNotification(inquiry);
-
-                // 성공 모달 표시
+                await db.collection('inquiries').add(inquiry);
                 inquiryModal.classList.add('hidden');
                 successModal.classList.remove('hidden');
-                
-                // 폼 초기화
                 inquiryForm.reset();
-                
             } catch (error) {
                 console.error('문의 접수 오류:', error);
                 alert('문의 접수 중 오류가 발생했습니다. 다시 시도해주세요.');

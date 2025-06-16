@@ -11,40 +11,48 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
-# Editor files
+# Production build
+build/
+dist/
+
+# IDE and OS files
+.DS_Store
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
+# Firebase
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
 
 # Logs
-logs/
+logs
 *.log
 
 # Runtime data
-pids/
+pids
 *.pid
 *.seed
 *.pid.lock
 
 # Coverage directory used by tools like istanbul
 coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
 
 # Dependency directories
 jspm_packages/
 
 # Optional npm cache directory
 .npm
+
+# Optional eslint cache
+.eslintcache
 
 # Optional REPL history
 .node_repl_history
@@ -55,14 +63,13 @@ jspm_packages/
 # Yarn Integrity file
 .yarn-integrity
 
-# Compressed images backup
-images_backup/
-*.backup
-
-# Development files
-*.test.js
-test/
-
-# Temporary files
+# Temporary folders
 tmp/
 temp/
+
+# Development only files (optional)
+test-firebase.html
+
+# Backup files
+*.bak
+*.backup

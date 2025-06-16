@@ -6,6 +6,10 @@
     <title>sustainX - 문의 관리</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="firebase-config.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -203,31 +207,20 @@
         let currentInquiries = [];
         let currentInquiryId = null;
         
-        // 관리자 인증 찴크
+        // Firebase Auth 상태 체크
         function checkAdminAuth() {
-            const isLoggedIn = localStorage.getItem('adminLoggedIn');
-            const loginTime = localStorage.getItem('adminLoginTime');
-            
-            if (!isLoggedIn || isLoggedIn !== 'true') {
-                redirectToHome();
-                return false;
-            }
-            
-            // 24시간 후 자동 로그아웃 (86400000ms = 24시간)
-            if (loginTime) {
-                const now = new Date().getTime();
-                const loginTimestamp = parseInt(loginTime);
-                const hoursPassed = (now - loginTimestamp) / (1000 * 60 * 60);
-                
-                if (hoursPassed > 24) {
-                    localStorage.removeItem('adminLoggedIn');
-                    localStorage.removeItem('adminLoginTime');
-                    redirectToHome();
-                    return false;
-                }
-            }
-            
-            return true;
+            return new Promise((resolve) => {
+                auth.onAuthStateChanged((user) => {
+                    if (user) {
+                        console.log('인증된 관리자:', user.email);
+                        resolve(true);
+                    } else {
+                        console.log('로그인되지 않은 상태');
+                        redirectToHome();
+                        resolve(false);
+                    }
+                });
+            });
         }
         
         // 홈페이지로 리다이렉트
@@ -236,31 +229,39 @@
             window.location.href = 'index.html';
         }
         
-        // 로그아웃 기능
-        function logout() {
+        // Firebase Auth 로그아웃 기능
+        async function logout() {
             if (confirm('로그아웃 하시겠습니까?')) {
-                localStorage.removeItem('adminLoggedIn');
-                localStorage.removeItem('adminLoginTime');
-                window.location.href = 'index.html';
+                try {
+                    await auth.signOut();
+                    console.log('Firebase Auth 로그아웃 성공');
+                    window.location.href = 'index.html';
+                } catch (error) {
+                    console.error('로그아웃 오류:', error.message);
+                    alert('로그아웃 중 오류가 발생했습니다.');
+                }
             }
         }
 
-        // 초기화
-        document.addEventListener('DOMContentLoaded', () => {
-            // 관리자 인증 찴크
-            if (!checkAdminAuth()) {
-                return; // 인증 실패 시 여기서 중단
-            }
-            
-            loadInquiries();
-            bindEvents();
-            
-            // 10분마다 세션 유효성 찴크
-            setInterval(() => {
-                if (!checkAdminAuth()) {
-                    return;
+        // 초기화 (Firebase Auth 기반)
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Firebase Auth 상태 체크
+                const isAuthenticated = await checkAdminAuth();
+                if (!isAuthenticated) {
+                    return; // 인증 실패 시 여기서 중단
                 }
-            }, 10 * 60 * 1000); // 10분 = 600,000ms
+                
+                // 인증 성공 시 데이터 로드 및 이벤트 바인딩
+                loadInquiries();
+                bindEvents();
+                
+                console.log('Firebase Auth 기반 관리자 페이지 초기화 완료');
+                
+            } catch (error) {
+                console.error('초기화 오류:', error);
+                redirectToHome();
+            }
         });
 
         // 이벤트 바인딩
@@ -289,12 +290,17 @@
             });
         }
 
-        // 문의 목록 로드
-        function loadInquiries() {
-            const inquiries = JSON.parse(localStorage.getItem('inquiries') || '[]');
-            currentInquiries = inquiries.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-            updateStatistics();
-            renderInquiries(currentInquiries);
+        // Firestore에서 문의 목록 불러오기
+        async function loadInquiries() {
+            try {
+                const snapshot = await db.collection('inquiries').orderBy('createdAt', 'desc').get();
+                currentInquiries = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                updateStatistics();
+                renderInquiries(currentInquiries);
+            } catch (error) {
+                console.error('문의 목록 로드 오류:', error);
+                showToast('문의 목록을 불러오는데 실패했습니다.');
+            }
         }
 
         // 통계 업데이트
@@ -452,23 +458,19 @@
             currentInquiryId = null;
         }
 
-        // 문의 상태 업데이트
-        function updateInquiryStatus(id, status) {
-            if (!id) return;
-
-            const inquiries = JSON.parse(localStorage.getItem('inquiries') || '[]');
-            const inquiry = inquiries.find(i => i.id === id);
-            
-            if (inquiry) {
-                inquiry.status = status;
-                inquiry.updatedAt = new Date().toISOString();
-                localStorage.setItem('inquiries', JSON.stringify(inquiries));
-                
-                // 데이터 새로고침
-                loadInquiries();
-                
-                // 성공 메시지
-                showToast(`상태가 "${getStatusText(status)}"로 업데이트되었습니다.`);
+        // 문의 상태 업데이트 (Firestore)
+        async function updateInquiryStatus(id, status) {
+            try {
+                await db.collection('inquiries').doc(id).update({
+                    status: status,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                await loadInquiries();
+                showToast('상태가 업데이트되었습니다.');
+                closeDetailModal();
+            } catch (error) {
+                console.error('상태 업데이트 오류:', error);
+                showToast('상태 업데이트에 실패했습니다.');
             }
         }
 
