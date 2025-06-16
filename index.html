@@ -9,7 +9,7 @@
     })(window,document,'script','dataLayer','GTM-PFJCC6BQ');</script>
     <!-- End Google Tag Manager -->
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <!-- 네이버 웹마스터 도구 인증 -->
     <meta name="naver-site-verification" content="99f157efc646b5a46e978ef3a90216839ab1d809" />
@@ -47,83 +47,47 @@
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
     
-    <!-- 폰트 프리로드 -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <!-- 폰트 최적화 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700;900&display=swap">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700;900&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" media="print" onload="this.media='all'">
+    <noscript>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap">
+    </noscript>
     
-    <!-- Tailwind CSS (Local) -->
-    <link rel="stylesheet" href="./dist/output.css">
-    
+    <!-- 중요 CSS 인라인 -->
     <style>
-        :root {
-            --primary-blue: #0A1628;
-            --secondary-green: #1B4D3E;
-            --accent-gold: #B8860B;
-            --text-dark: #2C3E50;
-            --text-light: #4A5568;
-            --bg-light: #F7FAFC;
-            --white: #FFFFFF;
-        }
-        
-        /* 기본 스타일 */
-        html {
-            scroll-behavior: smooth;
-        }
-        
+        /* 기본 폰트 폴백 */
         body {
-            font-family: 'Inter', 'Noto Sans KR', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            text-rendering: optimizeLegibility;
-            color: var(--text-dark);
-            background-color: var(--bg-light);
-            line-height: 1.8;
-            letter-spacing: -0.01em;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #F7FAFC;
+            color: #2C3E50;
         }
         
-        /* 배경이미지 최적화 */
-        .bg-optimized {
-            background-attachment: scroll; /* 모바일 성능 개선 */
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            will-change: transform; /* GPU 가속 */
-            image-rendering: optimizeQuality;
+        /* 로딩 상태 스타일 */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0A1628;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
         }
         
-        /* 향상된 레이지 로딩 */
-        .lazy-bg {
-            background-image: none;
-            opacity: 0;
-            transition: opacity 0.6s ease-in-out;
-            background-color: var(--primary-blue); /* 로딩 중 배경색 */
-            position: relative;
-        }
-        
-        .lazy-bg.loaded {
-            opacity: 1;
-        }
-        
-        /* 로딩 인디케이터 */
-        .lazy-bg::before {
+        .loading::after {
             content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
             width: 40px;
             height: 40px;
-            margin: -20px 0 0 -20px;
             border: 3px solid rgba(255, 255, 255, 0.3);
-            border-top: 3px solid var(--accent-gold);
+            border-top: 3px solid #B8860B;
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            z-index: 1;
-        }
-        
-        .lazy-bg.loaded::before {
-            display: none;
         }
         
         @keyframes spin {
@@ -131,464 +95,50 @@
             100% { transform: rotate(360deg); }
         }
         
-        /* 배경 그라디언트 최적화 */
-        .bg-overlay {
-            background: linear-gradient(135deg, 
-                rgba(10, 22, 40, 0.85) 0%, 
-                rgba(10, 22, 40, 0.80) 50%, 
-                rgba(10, 22, 40, 0.85) 100%);
-            backdrop-filter: blur(1px);
-            -webkit-backdrop-filter: blur(1px);
+        /* 기본 레이아웃 */
+        .container {
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 1rem;
+            box-sizing: border-box;
         }
         
-        /* 브랜드명과 네비링크 - 흰색 텍스트로 변경 */
-        .brand-heading {
-            font-family: 'Montserrat', 'Noto Sans KR', sans-serif;
-            font-weight: 800;
-            color: var(--white) !important;
-            letter-spacing: -0.02em;
-            /* 강제 가시성 확보 */
-            position: relative;
-            z-index: 10;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
-            /* 디버깅용 - 제거 가능 */
-            min-width: 100px;
-            min-height: 30px;
-        }
-        
-        /* 모바일 메뉴 버튼 색상 조정 */
-        .mobile-menu-btn {
-            color: var(--white) !important;
-        }
-        
-        .heading-1 {
-            font-family: 'Montserrat', 'Noto Sans KR', sans-serif;
-            font-weight: 700;
-            font-size: 3rem;
-            line-height: 1.3;
-            letter-spacing: -0.02em;
-        }
-        
-        .heading-2 {
-            font-family: 'Montserrat', 'Noto Sans KR', sans-serif;
-            font-weight: 600;
-            font-size: 2.25rem;
-            line-height: 1.4;
-            letter-spacing: -0.02em;
-        }
-        
-        .body-text {
-            font-family: 'Inter', 'Noto Sans KR', sans-serif;
-            font-weight: 400;
-            color: var(--text-light);
-            font-size: 1.125rem;
-        }
-        
-        .supporting-text {
-            font-family: 'Inter', 'Noto Sans KR', sans-serif;
-            font-weight: 500;
-            color: var(--text-light);
-            font-size: 1.125rem;
-        }
-        
-        /* Glassmorphism 강화 (Liquid Glass 스타일) */
-        .glass {
-            background: rgba(255, 255, 255, 0.55);
-            backdrop-filter: blur(32px) saturate(160%);
-            -webkit-backdrop-filter: blur(32px) saturate(160%);
-            border: 1.5px solid rgba(255,255,255,0.35);
-            box-shadow: 0 8px 32px 0 rgba(10,22,40,0.18), 0 0 40px 0 rgba(86,156,214,0.08);
-            border-radius: 2rem;
-            transition: box-shadow 0.3s, background 0.3s;
-        }
-        .glass:hover {
-            box-shadow: 0 16px 48px 0 rgba(10,22,40,0.22), 0 0 80px 0 rgba(86,156,214,0.16);
-            background: rgba(255,255,255,0.65);
-        }
-        .glass-dark {
-            background: rgba(10, 22, 40, 0.65);
-            backdrop-filter: blur(32px) saturate(160%);
-            -webkit-backdrop-filter: blur(32px) saturate(160%);
-            border: 1.5px solid rgba(255,255,255,0.12);
-            box-shadow: 0 8px 32px 0 rgba(10,22,40,0.28), 0 0 40px 0 rgba(86,156,214,0.12);
-            border-radius: 2rem;
-        }
-        .value-card {
-            background: rgba(255,255,255,0.65);
-            border-radius: 2rem;
-            padding: 2.5rem;
-            box-shadow: 0 8px 32px 0 rgba(10,22,40,0.10), 0 0 40px 0 rgba(86,156,214,0.06);
-            border: 1.5px solid rgba(255,255,255,0.25);
-            transition: box-shadow 0.3s, background 0.3s;
-        }
-        .value-card:hover {
-            box-shadow: 0 16px 48px 0 rgba(10,22,40,0.16), 0 0 80px 0 rgba(86,156,214,0.12);
-            background: rgba(255,255,255,0.78);
-        }
-        /* 버튼 glass 효과 */
-        .btn-primary, .btn-secondary {
-            background: rgba(255,255,255,0.18);
-            color: var(--primary-blue);
-            border: 1.5px solid rgba(255,255,255,0.35);
-            box-shadow: 0 2px 8px 0 rgba(86,156,214,0.10);
-            backdrop-filter: blur(12px) saturate(140%);
-            -webkit-backdrop-filter: blur(12px) saturate(140%);
-            border-radius: 1.5rem;
-            transition: box-shadow 0.3s, background 0.3s, color 0.3s;
-        }
-        .btn-primary:hover, .btn-secondary:hover {
-            background: rgba(255,255,255,0.32);
-            color: var(--secondary-green);
-            box-shadow: 0 4px 16px 0 rgba(86,156,214,0.18);
-        }
-        /* 배경 gradient + glow */
-        .bg-brand-gradient {
-            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue) 60%, var(--secondary-green) 85%, var(--accent-gold) 100%);
-            position: relative;
-            overflow: hidden;
-        }
-        .bg-brand-gradient::after {
-            content: '';
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            width: 120vw;
-            height: 120vw;
-            transform: translate(-50%,-50%);
-            background: radial-gradient(circle, rgba(86,156,214,0.12) 0%, rgba(255,255,255,0) 70%);
-            filter: blur(60px);
-            z-index: 0;
-            pointer-events: none;
-        }
-        /* 카드/섹션 곡선 강조 */
-        section, .glass, .glass-dark, .value-card {
-            border-radius: 2rem;
-        }
-        
-        /* 한국어 텍스트 줄바뀜 최적화 강화 */
-        h1, h2, h3, h4, h5, h6, p, li, span {
-            word-break: keep-all;
-            word-wrap: break-word;
-            line-break: strict;
-            line-height: 1.8; /* 기본 줄간격 더 증가 */
-        }
-        
-        /* 제목별 줄간격 최적화 */
-        h1 {
-            line-height: 1.4; /* 증가 */
-            letter-spacing: -0.025em;
-        }
-        h2 {
-            line-height: 1.5; /* 증가 */
-            letter-spacing: -0.02em;
-        }
-        h3 {
-            line-height: 1.6; /* 증가 */
-            letter-spacing: -0.015em;
-        }
-        
-        /* 브랜드명 등 고유명사 줄바뿌 방지 */
-        .no-break {
-            white-space: nowrap;
-        }
-        
-        /* 중요 키워드 줄바뿌 방지 및 정렬 개선 */
-        .keep-together {
-            white-space: nowrap;
-            vertical-align: baseline;
-            display: inline-block; /* inline에서 inline-block으로 변경 */
-        }
-        
-        /* 긴 텍스트용 keep-together */
-        .keep-together-long {
-            white-space: nowrap;
-            vertical-align: baseline;
-            display: inline-block;
-            margin-right: 0; /* 오른쪽 여백 제거 */
-        }
-        
-        /* 리스트 가독성 및 정렬 개선 */
-        ul li {
-            line-height: 2.0; /* 더 넓은 줄간격 */
-            margin-bottom: 1rem; /* 더 넓은 간격 */
-            padding-left: 0.5rem;
-            display: flex;
-            align-items: flex-start;
-        }
-        
-        /* 리스트 내용 정렬 */
-        ul li .flex.items-start {
-            align-items: center;
-        }
-        
-        /* 리스트 불릿 포인트 개선 */
-        ul li::marker {
-            color: var(--accent-gold);
-        }
-        
-        /* 카드 내 텍스트 간격 개선 */
-        .card-spacing {
-            margin-bottom: 1.5rem; /* 더 좁은 간격 */
-        }
-        
-        /* 설명 텍스트 크기 개선 */
-        .description-text {
-            font-size: 1.25rem; /* 20px로 더 증가 */
-            line-height: 2.0; /* 더 넓은 줄간격 */
-            margin-bottom: 2rem;
-            letter-spacing: -0.01em;
-        }
-        
-        /* 서브 텍스트 가독성 개선 */
-        .sub-text {
-            font-size: 1.125rem;
-            line-height: 1.9;
-            margin-bottom: 1.5rem;
-            letter-spacing: -0.005em;
-        }
-        
-        /* 카드 가독성 개선 */
-        .card-title {
-            margin-bottom: 0.75rem;
-            font-size: 1.25rem;
-            font-weight: 700;
-            word-break: keep-all;
-            line-height: 1.4;
-        }
-        .card-title.blue {
-            color: #60A5FA; /* 더 밝은 파란색 */
-        }
-        .card-title.green {
-            color: #34D399; /* 더 밝은 초록색 */
-        }
-        .card-title.gold {
-            color: #FBBF24; /* 더 밝은 골드색 */
-        }
-        
-        .card-icon {
-            display: inline-flex;
-            padding: 0.75rem;
-            border-radius: 0.75rem;
-            margin-bottom: 1rem;
-            backdrop-filter: blur(8px);
-        }
-        .card-icon.blue {
-            background: rgba(96, 165, 250, 0.2);
-            color: #60A5FA;
-        }
-        .card-icon.green {
-            background: rgba(52, 211, 153, 0.2);
-            color: #34D399;
-        }
-        .card-icon.gold {
-            background: rgba(251, 191, 36, 0.2);
-            color: #FBBF24;
-        }
-        
-        .card-text {
-            font-size: 1.125rem; /* 더 큰 폰트 */
-            line-height: 1.8; /* 더 넓은 줄간격 */
-            word-break: keep-all;
-            word-wrap: break-word;
-            margin-bottom: 1rem;
-            letter-spacing: -0.005em;
-        }
-        .card-text.dark {
-            color: rgba(255, 255, 255, 0.95);
-        }
-        
-        /* 카드 내 리스트 최적화 */
-        .glass-dark ul {
-            margin: 0;
-            padding: 0;
-            list-style: none;
-        }
-        
-        .glass-dark ul li {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 0.5rem;
-            line-height: 1.6; /* 1.5에서 1.6으로 약간 증가 */
-            font-size: 1rem;
-        }
-        
-        .glass-dark ul li:last-child {
-            margin-bottom: 0;
-        }
-        
-        .glass-dark ul li span:first-child {
-            flex-shrink: 0;
-            margin-right: 0.5rem;
-            margin-top: 0.125rem;
-            font-size: 0.875rem;
-        }
-        
-        .glass-dark ul li span:last-child {
-            flex: 1;
-            word-break: keep-all;
-            word-wrap: break-word;
-            font-size: 1rem; /* 명시적으로 폰트 크기 지정 */
-        }
-        
-        /* glass-dark 가독성 개선 */
-        .glass-dark {
-            background: rgba(10, 22, 40, 0.9); /* 더 진하게 */
-            backdrop-filter: blur(32px) saturate(160%);
-            -webkit-backdrop-filter: blur(32px) saturate(160%);
-            border: 1.5px solid rgba(255,255,255,0.25); /* 더 밝은 테두리 */
-            box-shadow: 0 8px 32px 0 rgba(10,22,40,0.4), 0 0 40px 0 rgba(86,156,214,0.15);
-            border-radius: 2rem;
-            min-height: 180px; /* 200px에서 180px로 줄임 */
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start; /* space-between에서 flex-start로 변경 */
-        }
-        
-        /* 디버깅: 브랜드 로고 강제 스타일 (문제 시 활성화) */
-        .debug-brand {
-            background: red !important;
-            color: white !important;
-            padding: 5px !important;
-            border: 2px solid yellow !important;
-        }
-        
-        /* 네비게이션 - 어두운 배경으로 변경 */
-        .nav-blur {
-            background: rgba(10, 22, 40, 0.95) !important;
-            backdrop-filter: blur(40px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            /* 그림자 효과 강화 */
-            box-shadow: 0 2px 8px rgba(10, 22, 40, 0.3);
-        }
-        
-        .nav-link {
-            font-family: 'Montserrat', 'Noto Sans KR', sans-serif;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.9) !important;
-            transition: color 0.3s ease;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-        }
-        
-        .nav-link:hover {
-            color: var(--accent-gold) !important;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
-        }
-        
-        /* 커스텀 스크롤바 스타일 */
-        .custom-scrollbar {
-            scrollbar-width: thin;
-            scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(156, 163, 175, 0.5);
-            border-radius: 3px;
-            transition: background 0.3s ease;
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: rgba(107, 114, 128, 0.7);
-        }
-        
-        /* 모달 전용 스크롤바 - 내부 포함 */
-        .modal-scrollbar {
-            scrollbar-width: thin;
-            scrollbar-color: rgba(10, 22, 40, 0.3) transparent;
-        }
-        
-        .modal-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        .modal-scrollbar::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-            margin: 8px 4px; /* 상하좌우 여백 */
-        }
-        
-        .modal-scrollbar::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, rgba(10, 22, 40, 0.4) 0%, rgba(27, 77, 62, 0.4) 100%);
-            border-radius: 3px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-        }
-        
-        .modal-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(180deg, rgba(10, 22, 40, 0.6) 0%, rgba(27, 77, 62, 0.6) 100%);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-        
-        /* 모달 컨테이너 스타일 개선 */
-        .modal-container {
-            border-radius: 2rem;
-            overflow: hidden; /* 모든 내용이 모달 경계 내부에 유지 */
-        }
-        
-        /* 폼 요소 스타일 개선 */
-        .form-input {
-            transition: all 0.3s ease;
-            border: 2px solid #e5e7eb;
-        }
-        
-        .form-input:focus {
-            outline: none;
-            border-color: var(--primary-blue);
-            box-shadow: 0 0 0 3px rgba(10, 22, 40, 0.1);
-            transform: translateY(-1px);
-        }
-        
-        .form-input:hover {
-            border-color: #d1d5db;
-        }
-        
-        /* 모달 배경 블러 효과 강화 */
-        .modal-backdrop {
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-        }
-        @media (prefers-color-scheme: dark) {
-            body {
-                background-color: var(--primary-blue);
-                color: var(--white);
+        /* 모바일 최적화 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 0.5rem;
             }
             
-            .glass {
-                background: rgba(10, 22, 40, 0.95);
-                color: var(--white);
+            .heading-1 {
+                font-size: 2rem;
+                line-height: 1.4;
             }
             
-            .value-card {
-                background: rgba(255, 255, 255, 0.05);
-                color: var(--white);
+            .heading-2 {
+                font-size: 1.75rem;
+                line-height: 1.4;
             }
             
-            /* 네비게이션은 어두운 테마 유지 - 라이트/다크모드 관계없이 일관성 */
-            .nav-blur {
-                background: rgba(10, 22, 40, 0.95) !important;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-            }
-            
-            .brand-heading {
-                color: var(--white) !important;
-            }
-            
-            .nav-link {
-                color: rgba(255, 255, 255, 0.9) !important;
-            }
-            
-            .nav-link:hover {
-                color: var(--accent-gold) !important;
+            .body-text {
+                font-size: 1rem;
             }
         }
     </style>
+    
+    <!-- 비동기 CSS 로딩 -->
+    <link rel="stylesheet" href="./dist/output.css" media="print" onload="this.media='all'">
+    <noscript>
+        <link rel="stylesheet" href="./dist/output.css">
+    </noscript>
+    
+    <!-- 초기 로딩 상태 표시 -->
+    <script>
+        document.documentElement.classList.add('loading');
+        window.addEventListener('load', function() {
+            document.documentElement.classList.remove('loading');
+        });
+    </script>
 </head>
 <body class="min-h-screen">
     <!-- Google Tag Manager (noscript) -->
