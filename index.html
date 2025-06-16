@@ -11,6 +11,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
+    <!-- 캐시 방지 메타 태그 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
     <!-- 사파리 관련 메타 태그 -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -282,10 +287,10 @@
             });
         }
     </script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <script src="firebase-config.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=1.0"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=1.0"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=1.0"></script>
+    <script src="firebase-config.js?v=1.0"></script>
 </head>
 <body class="min-h-screen">
     <!-- Google Tag Manager (noscript) -->
@@ -937,38 +942,84 @@
             }
         });
         
-        // 관리자 로그인 처리 (Firebase Auth 사용)
+        // 관리자 로그인 처리 (Firebase Auth 사용) - 개선된 버전
         adminLoginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const email = document.getElementById('admin-email').value;
             const password = document.getElementById('admin-password').value;
             
+            console.log('관리자 로그인 시도:', email);
+            
             try {
+                // 로그인 버튼 비활성화
+                const submitBtn = adminLoginForm.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.textContent = '로그인 중...';
+                
                 // Firebase Authentication으로 로그인
                 const userCredential = await auth.signInWithEmailAndPassword(email, password);
                 console.log('Firebase Auth 로그인 성공:', userCredential.user.email);
                 
-                // 로그인 성공 시 관리자 페이지로 이동
-                adminLoginModal.classList.add('hidden');
-                document.body.style.overflow = 'auto';
-                window.location.href = 'admin.html';
+                // 로그인 성공 메시지
+                loginError.classList.add('hidden');
+                const successMsg = document.createElement('div');
+                successMsg.className = 'text-green-600 text-sm mt-2';
+                successMsg.textContent = '로그인 성공! 관리자 페이지로 이돕니다...';
+                adminLoginForm.appendChild(successMsg);
+                
+                // 세션 스토리지에 로그인 상태 저장
+                sessionStorage.setItem('sustainx_admin_logged_in', 'true');
+                sessionStorage.setItem('sustainx_admin_email', userCredential.user.email);
+                sessionStorage.setItem('sustainx_admin_login_time', Date.now().toString());
+                
+                // 짧은 딴레이 후 리다이렉트
+                setTimeout(() => {
+                    adminLoginModal.classList.add('hidden');
+                    document.body.style.overflow = 'auto';
+                    window.location.href = 'admin.html';
+                }, 1000);
                 
             } catch (error) {
                 // 로그인 실패
-                console.error('Firebase Auth 로그인 실패:', error.message);
-                loginError.textContent = '이메일 또는 비밀번호가 올바르지 않습니다.';
+                console.error('Firebase Auth 로그인 실패:', error);
+                
+                let errorMessage = '로그인에 실패했습니다.';
+                
+                switch(error.code) {
+                    case 'auth/user-not-found':
+                        errorMessage = '등록되지 않은 이메일입니다.';
+                        break;
+                    case 'auth/wrong-password':
+                        errorMessage = '비밀번호가 올바르지 않습니다.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage = '유효하지 않은 이메일 형식입니다.';
+                        break;
+                    case 'auth/too-many-requests':
+                        errorMessage = '너무 많은 로그인 시도로 일시적으로 차단되었습니다. 잠시 후 다시 시도해주세요.';
+                        break;
+                    default:
+                        errorMessage = '이메일 또는 비밀번호가 올바르지 않습니다.';
+                }
+                
+                loginError.textContent = errorMessage;
                 loginError.classList.remove('hidden');
                 
-                // 입력 필드 초기화 및 포커스
-                document.getElementById('admin-email').value = '';
+                // 비밀번호 필드만 초기화
                 document.getElementById('admin-password').value = '';
-                document.getElementById('admin-email').focus();
+                document.getElementById('admin-password').focus();
                 
                 // 5초 후 에러 메시지 숨기기
                 setTimeout(() => {
                     loginError.classList.add('hidden');
                 }, 5000);
+                
+            } finally {
+                // 로그인 버튼 재활성화
+                const submitBtn = adminLoginForm.querySelector('button[type="submit"]');
+                submitBtn.disabled = false;
+                submitBtn.textContent = '로그인';
             }
         });
         
