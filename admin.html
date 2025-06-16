@@ -331,7 +331,7 @@
             tableBody.innerHTML = inquiries.map(inquiry => `
                 <tr class="hover:bg-gray-50 cursor-pointer inquiry-row" data-id="${inquiry.id}">
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        ${formatDateTime(inquiry.timestamp)}
+                        ${formatDateTime(inquiry.createdAt)}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="text-sm font-medium text-gray-900">${inquiry.company}</div>
@@ -438,7 +438,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">접수 시간</label>
-                        <p class="mt-1 text-sm text-gray-900">${formatDate(inquiry.timestamp)}</p>
+                        <p class="mt-1 text-sm text-gray-900">${formatDate(inquiry.createdAt)}</p>
                     </div>
                 </div>
                 <div class="mt-4">
@@ -458,19 +458,51 @@
             currentInquiryId = null;
         }
 
-        // 문의 상태 업데이트 (Firestore)
+        // 문의 상태 업데이트 (Firestore) - 디버깅 강화
         async function updateInquiryStatus(id, status) {
+            console.log('상태 업데이트 시도:', { id, status });
+            
             try {
-                await db.collection('inquiries').doc(id).update({
+                // 현재 사용자 인증 상태 확인
+                const currentUser = auth.currentUser;
+                if (!currentUser) {
+                    throw new Error('인증되지 않은 사용자');
+                }
+                console.log('인증된 사용자:', currentUser.email);
+                
+                // Firestore 업데이트 시도
+                const updateData = {
                     status: status,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedBy: currentUser.email
+                };
+                console.log('업데이트할 데이터:', updateData);
+                
+                await db.collection('inquiries').doc(id).update(updateData);
+                console.log('Firestore 업데이트 성공');
+                
+                // 데이터 재로드
                 await loadInquiries();
                 showToast('상태가 업데이트되었습니다.');
                 closeDetailModal();
+                
             } catch (error) {
-                console.error('상태 업데이트 오류:', error);
-                showToast('상태 업데이트에 실패했습니다.');
+                console.error('상태 업데이트 상세 오류:', {
+                    message: error.message,
+                    code: error.code,
+                    stack: error.stack
+                });
+                
+                // 사용자에게 구체적인 오류 메시지 표시
+                let errorMessage = '상태 업데이트에 실패했습니다.';
+                if (error.code === 'permission-denied') {
+                    errorMessage = '권한이 없습니다. 관리자 로그인을 확인해주세요.';
+                } else if (error.code === 'not-found') {
+                    errorMessage = '문의를 찾을 수 없습니다.';
+                }
+                
+                showToast(errorMessage);
+                alert(`오류 상세: ${error.message}`);
             }
         }
 
@@ -534,7 +566,7 @@
             const excelData = currentInquiries.map((inquiry, index) => {
                 return {
                     '순번': index + 1,
-                    '접수시간': formatDateForExcel(inquiry.timestamp),
+                    '접수시간': formatDateForExcel(inquiry.createdAt),
                     '회사명': inquiry.company || '',
                     '담당자명': inquiry.name || '',
                     '직책': inquiry.position || '',
@@ -651,17 +683,55 @@
         }
 
         function formatDate(timestamp) {
-            return new Date(timestamp).toLocaleString('ko-KR');
+            try {
+                let date;
+                
+                // Firebase Timestamp 객체 처리
+                if (timestamp && timestamp.toDate) {
+                    date = timestamp.toDate();
+                } else if (timestamp && timestamp.seconds) {
+                    date = new Date(timestamp.seconds * 1000);
+                } else if (timestamp) {
+                    date = new Date(timestamp);
+                } else {
+                    return '-';
+                }
+                
+                return date.toLocaleString('ko-KR');
+            } catch (error) {
+                console.error('날짜 포맷팅 오류:', error, '원본 데이터:', timestamp);
+                return '-';
+            }
         }
         
         // 날짜시간 포맧팅 (테이블용 - 더 간결하게)
         function formatDateTime(timestamp) {
-            const date = new Date(timestamp);
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-            return `${month}/${day} ${hours}:${minutes}`;
+            try {
+                let date;
+                
+                // Firebase Timestamp 객체 처리
+                if (timestamp && timestamp.toDate) {
+                    date = timestamp.toDate();
+                } else if (timestamp && timestamp.seconds) {
+                    // Firebase Timestamp 객체의 경우
+                    date = new Date(timestamp.seconds * 1000);
+                } else if (timestamp) {
+                    // 일반 timestamp 또는 Date 객체
+                    date = new Date(timestamp);
+                } else {
+                    return '-';
+                }
+                
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                return `${month}/${day} ${hours}:${minutes}`;
+                
+            } catch (error) {
+                console.error('날짜 포맷팅 오류:', error, '원본 데이터:', timestamp);
+                return '-';
+            }
         }
         
         // 다음 상태 가져오기
