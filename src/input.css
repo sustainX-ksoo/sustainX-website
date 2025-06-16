@@ -198,3 +198,15 @@ h1, h2, h3, h4, h5, h6, p, li, span {
         color: var(--white);
     }
 }
+
+/* 모달 입력창 텍스트 색상 강제 적용 */
+.modal-container input,
+.modal-container textarea,
+.modal-container select {
+  color: #222 !important;
+}
+.modal-container input::placeholder,
+.modal-container textarea::placeholder {
+  color: #888 !important;
+  opacity: 1;
+}
