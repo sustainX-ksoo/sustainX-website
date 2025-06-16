@@ -1608,6 +1608,32 @@ ESG 고민사항: ${inquiry.concern}
                 }
             }, 1000);
         });
+
+        // 배경 이미지 로드 함수
+        function loadBackgroundImage(element, bgImage) {
+          if (!element || !bgImage) return;
+
+          // 원본 이미지만 사용
+          element.style.backgroundImage = `url(${bgImage})`;
+        }
+
+        // 배경 이미지 로드 이벤트 리스너
+        document.addEventListener('DOMContentLoaded', () => {
+          const sections = document.querySelectorAll('.section-bg');
+          sections.forEach(section => {
+            const bgImage = section.dataset.bgImage;
+            if (bgImage) {
+              loadBackgroundImage(section, bgImage);
+            }
+          });
+        });
+
+        // sustainX 객체 업데이트
+        const sustainX = {
+          // ... existing code ...
+          // WebP 지원 확인 제거
+          // ... existing code ...
+        };
     </script>
 </body>
 </html>
