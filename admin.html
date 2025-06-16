@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sustainX - 문의 관리</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            blue: '#0A1628',
+                            green: '#1B4D3E',
+                            gold: '#B8860B',
+                            charcoal: '#2C3E50',
+                            light: '#ECF0F1',
+                            white: '#FFFFFF'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-cover bg-center bg-fixed bg-no-repeat min-h-screen relative" style="background-image: url('images/admin/admin-bg.jpeg');">
+    <!-- 배경 오버레이 -->
+    <div class="fixed inset-0 bg-white/40 backdrop-blur-[1px] z-0"></div>
+    
+    <div class="min-h-screen relative z-10">
+        <!-- 헤더 -->
+        <header class="bg-white/80 backdrop-blur-md shadow-lg border-b border-white/20">
+            <div class="container mx-auto px-6 py-4">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-4">
+                        <h1 class="text-2xl font-bold text-brand-blue">sustainX</h1>
+                        <span class="text-brand-blue/60">|</span>
+                        <span class="text-lg text-brand-blue/80">문의 관리</span>
+                    </div>
+                    <div class="flex gap-4">
+                        <button id="refresh-btn" class="bg-brand-blue text-white px-4 py-2 rounded-lg hover:bg-brand-green transition-colors">
+                            새로고침
+                        </button>
+                        <button id="export-btn" class="bg-brand-green text-white px-4 py-2 rounded-lg hover:bg-brand-blue transition-colors">
+                            엑셀 내보내기
+                        </button>
+                        <button onclick="logout()" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors">
+                            로그아웃
+                        </button>
+                        <a href="index.html" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors">
+                            홈페이지로
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="container mx-auto px-6 py-8">
+            <!-- 통계 카드 -->
+            <div class="grid md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white/60 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-white/30 hover:bg-white/70 transition-all duration-300">
+                    <h3 class="text-sm font-medium text-brand-blue/70 mb-2">전체 문의</h3>
+                    <p id="total-count" class="text-3xl font-bold text-brand-blue">0</p>
+                </div>
+                <div class="bg-white/60 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-white/30 hover:bg-white/70 transition-all duration-300">
+                    <h3 class="text-sm font-medium text-green-700/70 mb-2">신규 문의</h3>
+                    <p id="new-count" class="text-3xl font-bold text-green-600">0</p>
+                </div>
+                <div class="bg-white/60 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-white/30 hover:bg-white/70 transition-all duration-300">
+                    <h3 class="text-sm font-medium text-yellow-700/70 mb-2">처리 중</h3>
+                    <p id="processing-count" class="text-3xl font-bold text-yellow-600">0</p>
+                </div>
+                <div class="bg-white/60 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-white/30 hover:bg-white/70 transition-all duration-300">
+                    <h3 class="text-sm font-medium text-gray-600/70 mb-2">완료</h3>
+                    <p id="completed-count" class="text-3xl font-bold text-gray-600">0</p>
+                </div>
+            </div>
+
+            <!-- 필터 -->
+            <div class="bg-white/60 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-white/30 mb-6">
+                <div class="flex flex-wrap gap-4 items-center">
+                    <div>
+                        <label for="status-filter" class="block text-sm font-medium text-brand-blue/80 mb-1">상태</label>
+                        <select id="status-filter" class="border border-brand-blue/20 rounded-lg px-3 py-2 bg-white/80 focus:ring-2 focus:ring-brand-blue/30 focus:border-brand-blue transition-all">
+                            <option value="">전체</option>
+                            <option value="new">신규</option>
+                            <option value="processing">처리중</option>
+                            <option value="completed">완료</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="industry-filter" class="block text-sm font-medium text-brand-blue/80 mb-1">업종</label>
+                        <select id="industry-filter" class="border border-brand-blue/20 rounded-lg px-3 py-2 bg-white/80 focus:ring-2 focus:ring-brand-blue/30 focus:border-brand-blue transition-all">
+                            <option value="">전체</option>
+                            <option value="automotive">자동차/부품</option>
+                            <option value="electronics">전자/전기</option>
+                            <option value="manufacturing">제조업</option>
+                            <option value="chemical">화학/소재</option>
+                            <option value="other">기타</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="date-filter" class="block text-sm font-medium text-brand-blue/80 mb-1">기간</label>
+                        <select id="date-filter" class="border border-brand-blue/20 rounded-lg px-3 py-2 bg-white/80 focus:ring-2 focus:ring-brand-blue/30 focus:border-brand-blue transition-all">
+                            <option value="">전체</option>
+                            <option value="today">오늘</option>
+                            <option value="week">이번 주</option>
+                            <option value="month">이번 달</option>
+                        </select>
+                    </div>
+                    <div class="flex-1"></div>
+                    <button id="clear-filters" class="bg-brand-blue/80 text-white px-4 py-2 rounded-lg hover:bg-brand-blue transition-colors shadow-md">
+                        필터 초기화
+                    </button>
+                </div>
+            </div>
+
+            <!-- 문의 목록 -->
+            <div class="bg-white/60 backdrop-blur-sm rounded-xl shadow-lg border border-white/30 overflow-hidden">
+                <div class="px-6 py-4 border-b border-white/30 bg-gradient-to-r from-brand-blue/10 to-brand-green/10">
+                    <h2 class="text-lg font-semibold text-brand-blue">문의 목록</h2>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200" id="inquiry-table">
+                        <thead class="bg-gradient-to-r from-brand-blue/5 to-brand-green/5">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-brand-blue/70 uppercase tracking-wider">
+                                    접수시간
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-brand-blue/70 uppercase tracking-wider">
+                                    회사명
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-brand-blue/70 uppercase tracking-wider">
+                                    담당자
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-brand-blue/70 uppercase tracking-wider">
+                                    직책
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-brand-blue/70 uppercase tracking-wider">
+                                    연락처
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-brand-blue/70 uppercase tracking-wider">
+                                    업종
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-brand-blue/70 uppercase tracking-wider">
+                                    상담시기
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-brand-blue/70 uppercase tracking-wider">
+                                    상태
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-brand-blue/70 uppercase tracking-wider">
+                                    작업
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="inquiry-table-body" class="bg-white divide-y divide-gray-200">
+                            <!-- 문의 항목들이 여기에 동적으로 추가됩니다 -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="empty-state" class="p-12 text-center text-gray-500 hidden">
+                    <p class="text-lg mb-2">아직 접수된 문의가 없습니다.</p>
+                    <p class="text-sm">홈페이지에서 문의를 접수해보세요.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 문의 상세 모달 -->
+    <div id="detail-modal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white/80 backdrop-blur-md max-w-2xl w-full max-h-[90vh] overflow-y-auto rounded-xl shadow-2xl border border-white/30">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold text-brand-blue">문의 상세</h3>
+                    <button id="close-detail" class="text-brand-blue/60 hover:text-brand-blue text-2xl transition-colors">&times;</button>
+                </div>
+                
+                <div id="detail-content" class="space-y-4">
+                    <!-- 상세 내용이 여기에 동적으로 추가됩니다 -->
+                </div>
+                
+                <div class="mt-6 pt-6 border-t border-white/30">
+                    <h4 class="text-sm font-medium text-brand-blue/80 mb-3">상태 변경</h4>
+                    <div class="flex gap-2">
+                        <button class="status-btn bg-green-500/80 backdrop-blur-sm text-white px-3 py-1 rounded-lg text-sm hover:bg-green-500 transition-all border border-white/20" data-status="new">
+                            신규
+                        </button>
+                        <button class="status-btn bg-yellow-500/80 backdrop-blur-sm text-white px-3 py-1 rounded-lg text-sm hover:bg-yellow-500 transition-all border border-white/20" data-status="processing">
+                            처리중
+                        </button>
+                        <button class="status-btn bg-gray-500/80 backdrop-blur-sm text-white px-3 py-1 rounded-lg text-sm hover:bg-gray-500 transition-all border border-white/20" data-status="completed">
+                            완료
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentInquiries = [];
+        let currentInquiryId = null;
+        
+        // 관리자 인증 찴크
+        function checkAdminAuth() {
+            const isLoggedIn = localStorage.getItem('adminLoggedIn');
+            const loginTime = localStorage.getItem('adminLoginTime');
+            
+            if (!isLoggedIn || isLoggedIn !== 'true') {
+                redirectToHome();
+                return false;
+            }
+            
+            // 24시간 후 자동 로그아웃 (86400000ms = 24시간)
+            if (loginTime) {
+                const now = new Date().getTime();
+                const loginTimestamp = parseInt(loginTime);
+                const hoursPassed = (now - loginTimestamp) / (1000 * 60 * 60);
+                
+                if (hoursPassed > 24) {
+                    localStorage.removeItem('adminLoggedIn');
+                    localStorage.removeItem('adminLoginTime');
+                    redirectToHome();
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+        
+        // 홈페이지로 리다이렉트
+        function redirectToHome() {
+            alert('관리자 로그인이 필요합니다.');
+            window.location.href = 'index.html';
+        }
+        
+        // 로그아웃 기능
+        function logout() {
+            if (confirm('로그아웃 하시겠습니까?')) {
+                localStorage.removeItem('adminLoggedIn');
+                localStorage.removeItem('adminLoginTime');
+                window.location.href = 'index.html';
+            }
+        }
+
+        // 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            // 관리자 인증 찴크
+            if (!checkAdminAuth()) {
+                return; // 인증 실패 시 여기서 중단
+            }
+            
+            loadInquiries();
+            bindEvents();
+            
+            // 10분마다 세션 유효성 찴크
+            setInterval(() => {
+                if (!checkAdminAuth()) {
+                    return;
+                }
+            }, 10 * 60 * 1000); // 10분 = 600,000ms
+        });
+
+        // 이벤트 바인딩
+        function bindEvents() {
+            document.getElementById('refresh-btn').addEventListener('click', loadInquiries);
+            document.getElementById('export-btn').addEventListener('click', exportData);
+            document.getElementById('status-filter').addEventListener('change', filterInquiries);
+            document.getElementById('industry-filter').addEventListener('change', filterInquiries);
+            document.getElementById('date-filter').addEventListener('change', filterInquiries);
+            document.getElementById('clear-filters').addEventListener('click', clearFilters);
+            document.getElementById('close-detail').addEventListener('click', closeDetailModal);
+            
+            // 상태 변경 버튼
+            document.querySelectorAll('.status-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const status = e.target.dataset.status;
+                    updateInquiryStatus(currentInquiryId, status);
+                });
+            });
+
+            // 모달 외부 클릭시 닫기
+            document.getElementById('detail-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'detail-modal') {
+                    closeDetailModal();
+                }
+            });
+        }
+
+        // 문의 목록 로드
+        function loadInquiries() {
+            const inquiries = JSON.parse(localStorage.getItem('inquiries') || '[]');
+            currentInquiries = inquiries.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            updateStatistics();
+            renderInquiries(currentInquiries);
+        }
+
+        // 통계 업데이트
+        function updateStatistics() {
+            const total = currentInquiries.length;
+            const newCount = currentInquiries.filter(i => i.status === 'new').length;
+            const processingCount = currentInquiries.filter(i => i.status === 'processing').length;
+            const completedCount = currentInquiries.filter(i => i.status === 'completed').length;
+
+            document.getElementById('total-count').textContent = total;
+            document.getElementById('new-count').textContent = newCount;
+            document.getElementById('processing-count').textContent = processingCount;
+            document.getElementById('completed-count').textContent = completedCount;
+        }
+
+        // 문의 목록 렌더링
+        function renderInquiries(inquiries) {
+            const tableBody = document.getElementById('inquiry-table-body');
+            const emptyState = document.getElementById('empty-state');
+
+            if (inquiries.length === 0) {
+                tableBody.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            tableBody.innerHTML = inquiries.map(inquiry => `
+                <tr class="hover:bg-gray-50 cursor-pointer inquiry-row" data-id="${inquiry.id}">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        ${formatDateTime(inquiry.timestamp)}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">${inquiry.company}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">${inquiry.name}</div>
+                        <div class="text-sm text-gray-500">${inquiry.email}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        ${inquiry.position || '-'}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        ${inquiry.phone || '-'}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        ${getIndustryText(inquiry.industry)}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        ${getConsultationTimeText(inquiry.consultationTime)}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusClass(inquiry.status)}">
+                            ${getStatusText(inquiry.status)}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button class="text-indigo-600 hover:text-indigo-900 mr-3 detail-btn" data-id="${inquiry.id}">
+                            상세보기
+                        </button>
+                        <button class="text-green-600 hover:text-green-900 status-update-btn" data-id="${inquiry.id}" data-status="${getNextStatus(inquiry.status)}">
+                            ${getNextStatusText(inquiry.status)}
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+
+            // 상세보기 버튼 이벤트
+            document.querySelectorAll('.detail-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const inquiryId = btn.dataset.id;
+                    showInquiryDetail(inquiryId);
+                });
+            });
+
+            // 상태 업데이트 버튼 이벤트
+            document.querySelectorAll('.status-update-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const inquiryId = btn.dataset.id;
+                    const nextStatus = btn.dataset.status;
+                    if (nextStatus) {
+                        updateInquiryStatus(inquiryId, nextStatus);
+                    }
+                });
+            });
+
+            // 행 클릭 이벤트 (상세보기)
+            document.querySelectorAll('.inquiry-row').forEach(row => {
+                row.addEventListener('click', () => {
+                    const inquiryId = row.dataset.id;
+                    showInquiryDetail(inquiryId);
+                });
+            });
+        }
+
+        // 문의 상세 모달 표시
+        function showInquiryDetail(inquiryId) {
+            const inquiry = currentInquiries.find(i => i.id === inquiryId);
+            if (!inquiry) return;
+
+            currentInquiryId = inquiryId;
+            const detailContent = document.getElementById('detail-content');
+            
+            detailContent.innerHTML = `
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">회사명</label>
+                        <p class="mt-1 text-sm text-gray-900">${inquiry.company}</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">담당자명</label>
+                        <p class="mt-1 text-sm text-gray-900">${inquiry.name}</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">이메일</label>
+                        <p class="mt-1 text-sm text-gray-900">${inquiry.email}</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">연락처</label>
+                        <p class="mt-1 text-sm text-gray-900">${inquiry.phone || '-'}</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">직책</label>
+                        <p class="mt-1 text-sm text-gray-900">${inquiry.position || '-'}</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">업종</label>
+                        <p class="mt-1 text-sm text-gray-900">${getIndustryText(inquiry.industry)}</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">희망 상담 시기</label>
+                        <p class="mt-1 text-sm text-gray-900">${getConsultationTimeText(inquiry.consultationTime)}</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">접수 시간</label>
+                        <p class="mt-1 text-sm text-gray-900">${formatDate(inquiry.timestamp)}</p>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <label class="block text-sm font-medium text-gray-700">ESG 고민사항</label>
+                    <p class="mt-1 text-sm text-gray-900 bg-gray-50 p-3 rounded">${inquiry.concern}</p>
+                </div>
+            `;
+
+            document.getElementById('detail-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // 문의 상세 모달 닫기
+        function closeDetailModal() {
+            document.getElementById('detail-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            currentInquiryId = null;
+        }
+
+        // 문의 상태 업데이트
+        function updateInquiryStatus(id, status) {
+            if (!id) return;
+
+            const inquiries = JSON.parse(localStorage.getItem('inquiries') || '[]');
+            const inquiry = inquiries.find(i => i.id === id);
+            
+            if (inquiry) {
+                inquiry.status = status;
+                inquiry.updatedAt = new Date().toISOString();
+                localStorage.setItem('inquiries', JSON.stringify(inquiries));
+                
+                // 데이터 새로고침
+                loadInquiries();
+                
+                // 성공 메시지
+                showToast(`상태가 "${getStatusText(status)}"로 업데이트되었습니다.`);
+            }
+        }
+
+        // 필터링
+        function filterInquiries() {
+            const statusFilter = document.getElementById('status-filter').value;
+            const industryFilter = document.getElementById('industry-filter').value;
+            const dateFilter = document.getElementById('date-filter').value;
+
+            let filtered = [...currentInquiries];
+
+            if (statusFilter) {
+                filtered = filtered.filter(i => i.status === statusFilter);
+            }
+
+            if (industryFilter) {
+                filtered = filtered.filter(i => i.industry === industryFilter);
+            }
+
+            if (dateFilter) {
+                const now = new Date();
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const weekStart = new Date(today.getTime() - (today.getDay() * 24 * 60 * 60 * 1000));
+                const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+                filtered = filtered.filter(i => {
+                    const inquiryDate = new Date(i.timestamp);
+                    
+                    switch(dateFilter) {
+                        case 'today':
+                            return inquiryDate >= today;
+                        case 'week':
+                            return inquiryDate >= weekStart;
+                        case 'month':
+                            return inquiryDate >= monthStart;
+                        default:
+                            return true;
+                    }
+                });
+            }
+
+            renderInquiries(filtered);
+        }
+
+        // 필터 초기화
+        function clearFilters() {
+            document.getElementById('status-filter').value = '';
+            document.getElementById('industry-filter').value = '';
+            document.getElementById('date-filter').value = '';
+            renderInquiries(currentInquiries);
+        }
+
+        // 데이터 내보내기 (엑셀 형태)
+        function exportData() {
+            if (currentInquiries.length === 0) {
+                showToast('내보낼 데이터가 없습니다.');
+                return;
+            }
+
+            // 엑셀에 표시할 데이터 구성
+            const excelData = currentInquiries.map((inquiry, index) => {
+                return {
+                    '순번': index + 1,
+                    '접수시간': formatDateForExcel(inquiry.timestamp),
+                    '회사명': inquiry.company || '',
+                    '담당자명': inquiry.name || '',
+                    '직책': inquiry.position || '',
+                    '이메일': inquiry.email || '',
+                    '연락처': inquiry.phone || '',
+                    '업종': getIndustryText(inquiry.industry),
+                    'ESG 고민사항': inquiry.concern || '',
+                    '희망 상담시기': getConsultationTimeText(inquiry.consultationTime),
+                    '상태': getStatusText(inquiry.status),
+                    '마지막 업데이트': inquiry.updatedAt ? formatDateForExcel(inquiry.updatedAt) : '-'
+                };
+            });
+
+            // 워크북 생성
+            const workbook = XLSX.utils.book_new();
+            
+            // 워크시트 생성
+            const worksheet = XLSX.utils.json_to_sheet(excelData);
+            
+            // 열 너비 자동 조정
+            const range = XLSX.utils.decode_range(worksheet['!ref']);
+            const columnWidths = [];
+            
+            // 각 열의 최대 너비 계산
+            for (let col = range.s.c; col <= range.e.c; col++) {
+                let maxWidth = 10; // 최소 너비
+                
+                for (let row = range.s.r; row <= range.e.r; row++) {
+                    const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
+                    const cell = worksheet[cellAddress];
+                    
+                    if (cell && cell.v) {
+                        const cellLength = cell.v.toString().length;
+                        maxWidth = Math.max(maxWidth, cellLength);
+                    }
+                }
+                
+                // 한글 고려하여 너비 조정
+                columnWidths.push({ wch: Math.min(maxWidth * 1.2, 50) });
+            }
+            
+            worksheet['!cols'] = columnWidths;
+            
+            // 워크시트를 워크북에 추가
+            XLSX.utils.book_append_sheet(workbook, worksheet, '문의 목록');
+            
+            // 파일명 생성
+            const now = new Date();
+            const dateStr = now.getFullYear() + 
+                           String(now.getMonth() + 1).padStart(2, '0') + 
+                           String(now.getDate()).padStart(2, '0') + 
+                           '_' + 
+                           String(now.getHours()).padStart(2, '0') + 
+                           String(now.getMinutes()).padStart(2, '0');
+            
+            const fileName = `sustainX_문의목록_${dateStr}.xlsx`;
+            
+            // 파일 다운로드
+            XLSX.writeFile(workbook, fileName);
+            
+            showToast(`엑셀 파일이 다운로드되었습니다: ${fileName}`);
+        }
+        
+        // 엑셀용 날짜 포맧
+        function formatDateForExcel(timestamp) {
+            return new Date(timestamp).toLocaleString('ko-KR', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+
+        // 유틸리티 함수들
+        function getStatusClass(status) {
+            switch(status) {
+                case 'new': return 'bg-green-100 text-green-800';
+                case 'processing': return 'bg-yellow-100 text-yellow-800';
+                case 'completed': return 'bg-gray-100 text-gray-800';
+                default: return 'bg-gray-100 text-gray-800';
+            }
+        }
+
+        function getStatusText(status) {
+            switch(status) {
+                case 'new': return '신규';
+                case 'processing': return '처리중';
+                case 'completed': return '완료';
+                default: return '미분류';
+            }
+        }
+
+        function getIndustryText(industry) {
+            switch(industry) {
+                case 'automotive': return '자동차/부품';
+                case 'electronics': return '전자/전기';
+                case 'manufacturing': return '제조업';
+                case 'chemical': return '화학/소재';
+                case 'other': return '기타';
+                default: return '-';
+            }
+        }
+
+        function getConsultationTimeText(time) {
+            switch(time) {
+                case 'immediately': return '최대한 빠른 시일 내';
+                case 'next-week': return '다음 주 내';
+                case 'this-month': return '이번 달 내';
+                case 'flexible': return '유연하게 조정 가능';
+                default: return '-';
+            }
+        }
+
+        function formatDate(timestamp) {
+            return new Date(timestamp).toLocaleString('ko-KR');
+        }
+        
+        // 날짜시간 포맧팅 (테이블용 - 더 간결하게)
+        function formatDateTime(timestamp) {
+            const date = new Date(timestamp);
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${month}/${day} ${hours}:${minutes}`;
+        }
+        
+        // 다음 상태 가져오기
+        function getNextStatus(currentStatus) {
+            switch(currentStatus) {
+                case 'new': return 'processing';
+                case 'processing': return 'completed';
+                case 'completed': return null;
+                default: return 'processing';
+            }
+        }
+        
+        // 다음 상태 텍스트
+        function getNextStatusText(currentStatus) {
+            switch(currentStatus) {
+                case 'new': return '처리시작';
+                case 'processing': return '완료처리';
+                case 'completed': return '-';
+                default: return '처리시작';
+            }
+        }
+
+        // 토스트 메시지
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg z-50 transform transition-transform duration-300 translate-x-full';
+            toast.textContent = message;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.remove('translate-x-full');
+            }, 100);
+            
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

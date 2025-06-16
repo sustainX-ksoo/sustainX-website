@@ -1,0 +1,6 @@
+<!-- icon-144x144.png 대체용 SVG -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144 144" width="144" height="144">
+  <rect width="144" height="144" fill="#0A1628" rx="20"/>
+  <text x="72" y="90" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="48" font-weight="bold">sX</text>
+  <text x="72" y="110" text-anchor="middle" fill="#B8860B" font-family="Arial, sans-serif" font-size="12">ESG Platform</text>
+</svg>

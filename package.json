@@ -1,0 +1,24 @@
+{
+  "name": "sustainx-website",
+  "version": "1.0.0",
+  "description": "sustainX - The Supply Chain ESG Platform",
+  "main": "index.html",
+  "scripts": {
+    "serve": "http-server . -p 8080 -c-1",
+    "build-css": "tailwindcss -i ./src/input.css -o ./dist/output.css --watch",
+    "build": "tailwindcss -i ./src/input.css -o ./dist/output.css --minify",
+    "dev": "concurrently \"npm run build-css\" \"npm run serve\""
+  },
+  "keywords": ["ESG", "sustainability", "supply-chain"],
+  "author": "sustainX",
+  "license": "MIT",
+  "devDependencies": {
+    "tailwindcss": "^3.4.0",
+    "@tailwindcss/forms": "^0.5.7",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
+    "concurrently": "^8.2.2",
+    "http-server": "^14.1.1"
+  },
+  "dependencies": {}
+}

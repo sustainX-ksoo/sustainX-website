@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="sustainX는 공급망을 연결하는 ESG 플랫폼입니다. 복잡한 ESG를 누구나 할 수 있게 만듭니다.">
+    <meta name="theme-color" content="#0A1628">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- PWA 메타 태그 -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    
+    <!-- 폰트 프리로드 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700;900&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700;900&display=swap">
+    
+    <!-- 중요한 배경 이미지 프리로드 -->
+    <link rel="preload" as="image" href="./images/section/hero/hero-bg.jpg" media="(min-width: 769px)">
+    
+    <title>sustainX - The Supply Chain ESG Platform</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    
+    <!-- Tailwind CSS (Local) -->
+    <link rel="stylesheet" href="./dist/output.css">
+    
+    <style>
+        :root {
+            --primary-blue: #0A1628;
+            --secondary-green: #1B4D3E;
+            --accent-gold: #B8860B;
+            --text-dark: #2C3E50;
+            --text-light: #4A5568;
+            --bg-light: #F7FAFC;
+            --white: #FFFFFF;
+        }
+        
+        /* 기본 스타일 */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+            color: var(--text-dark);
+            background-color: var(--bg-light);
+            line-height: 1.8;
+            letter-spacing: -0.01em;
+        }
+        
+        /* 배경이미지 최적화 */
+        .bg-optimized {
+            background-attachment: scroll; /* 모바일 성능 개선 */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            will-change: transform; /* GPU 가속 */
+            image-rendering: optimizeQuality;
+        }
+        
+        /* 향상된 레이지 로딩 */
+        .lazy-bg {
+            background-image: none;
+            opacity: 0;
+            transition: opacity 0.6s ease-in-out;
+            background-color: var(--primary-blue); /* 로딩 중 배경색 */
+            position: relative;
+        }
+        
+        .lazy-bg.loaded {
+            opacity: 1;
+        }
+        
+        /* 로딩 인디케이터 */
+        .lazy-bg::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 40px;
+            height: 40px;
+            margin: -20px 0 0 -20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid var(--accent-gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            z-index: 1;
+        }
+        
+        .lazy-bg.loaded::before {
+            display: none;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 배경 그라디언트 최적화 */
+        .bg-overlay {
+            background: linear-gradient(135deg, 
+                rgba(10, 22, 40, 0.85) 0%, 
+                rgba(10, 22, 40, 0.80) 50%, 
+                rgba(10, 22, 40, 0.85) 100%);
+            backdrop-filter: blur(1px);
+            -webkit-backdrop-filter: blur(1px);
+        }
+        
+        /* 브랜드명과 네비링크 - 흰색 텍스트로 변경 */
+        .brand-heading {
+            font-family: 'Montserrat', 'Noto Sans KR', sans-serif;
+            font-weight: 800;
+            color: var(--white) !important;
+            letter-spacing: -0.02em;
+            /* 강제 가시성 확보 */
+            position: relative;
+            z-index: 10;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            /* 디버깅용 - 제거 가능 */
+            min-width: 100px;
+            min-height: 30px;
+        }
+        
+        /* 모바일 메뉴 버튼 색상 조정 */
+        .mobile-menu-btn {
+            color: var(--white) !important;
+        }
+        
+        .heading-1 {
+            font-family: 'Montserrat', 'Noto Sans KR', sans-serif;
+            font-weight: 700;
+            font-size: 3rem;
+            line-height: 1.3;
+            letter-spacing: -0.02em;
+        }
+        
+        .heading-2 {
+            font-family: 'Montserrat', 'Noto Sans KR', sans-serif;
+            font-weight: 600;
+            font-size: 2.25rem;
+            line-height: 1.4;
+            letter-spacing: -0.02em;
+        }
+        
+        .body-text {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            font-weight: 400;
+            color: var(--text-light);
+            font-size: 1.125rem;
+        }
+        
+        .supporting-text {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            font-weight: 500;
+            color: var(--text-light);
+            font-size: 1.125rem;
+        }
+        
+        /* Glassmorphism 강화 (Liquid Glass 스타일) */
+        .glass {
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(32px) saturate(160%);
+            -webkit-backdrop-filter: blur(32px) saturate(160%);
+            border: 1.5px solid rgba(255,255,255,0.35);
+            box-shadow: 0 8px 32px 0 rgba(10,22,40,0.18), 0 0 40px 0 rgba(86,156,214,0.08);
+            border-radius: 2rem;
+            transition: box-shadow 0.3s, background 0.3s;
+        }
+        .glass:hover {
+            box-shadow: 0 16px 48px 0 rgba(10,22,40,0.22), 0 0 80px 0 rgba(86,156,214,0.16);
+            background: rgba(255,255,255,0.65);
+        }
+        .glass-dark {
+            background: rgba(10, 22, 40, 0.65);
+            backdrop-filter: blur(32px) saturate(160%);
+            -webkit-backdrop-filter: blur(32px) saturate(160%);
+            border: 1.5px solid rgba(255,255,255,0.12);
+            box-shadow: 0 8px 32px 0 rgba(10,22,40,0.28), 0 0 40px 0 rgba(86,156,214,0.12);
+            border-radius: 2rem;
+        }
+        .value-card {
+            background: rgba(255,255,255,0.65);
+            border-radius: 2rem;
+            padding: 2.5rem;
+            box-shadow: 0 8px 32px 0 rgba(10,22,40,0.10), 0 0 40px 0 rgba(86,156,214,0.06);
+            border: 1.5px solid rgba(255,255,255,0.25);
+            transition: box-shadow 0.3s, background 0.3s;
+        }
+        .value-card:hover {
+            box-shadow: 0 16px 48px 0 rgba(10,22,40,0.16), 0 0 80px 0 rgba(86,156,214,0.12);
+            background: rgba(255,255,255,0.78);
+        }
+        /* 버튼 glass 효과 */
+        .btn-primary, .btn-secondary {
+            background: rgba(255,255,255,0.18);
+            color: var(--primary-blue);
+            border: 1.5px solid rgba(255,255,255,0.35);
+            box-shadow: 0 2px 8px 0 rgba(86,156,214,0.10);
+            backdrop-filter: blur(12px) saturate(140%);
+            -webkit-backdrop-filter: blur(12px) saturate(140%);
+            border-radius: 1.5rem;
+            transition: box-shadow 0.3s, background 0.3s, color 0.3s;
+        }
+        .btn-primary:hover, .btn-secondary:hover {
+            background: rgba(255,255,255,0.32);
+            color: var(--secondary-green);
+            box-shadow: 0 4px 16px 0 rgba(86,156,214,0.18);
+        }
+        /* 배경 gradient + glow */
+        .bg-brand-gradient {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue) 60%, var(--secondary-green) 85%, var(--accent-gold) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .bg-brand-gradient::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 120vw;
+            height: 120vw;
+            transform: translate(-50%,-50%);
+            background: radial-gradient(circle, rgba(86,156,214,0.12) 0%, rgba(255,255,255,0) 70%);
+            filter: blur(60px);
+            z-index: 0;
+            pointer-events: none;
+        }
+        /* 카드/섹션 곡선 강조 */
+        section, .glass, .glass-dark, .value-card {
+            border-radius: 2rem;
+        }
+        
+        /* 한국어 텍스트 줄바뀜 최적화 강화 */
+        h1, h2, h3, h4, h5, h6, p, li, span {
+            word-break: keep-all;
+            word-wrap: break-word;
+            line-break: strict;
+            line-height: 1.8; /* 기본 줄간격 더 증가 */
+        }
+        
+        /* 제목별 줄간격 최적화 */
+        h1 {
+            line-height: 1.4; /* 증가 */
+            letter-spacing: -0.025em;
+        }
+        h2 {
+            line-height: 1.5; /* 증가 */
+            letter-spacing: -0.02em;
+        }
+        h3 {
+            line-height: 1.6; /* 증가 */
+            letter-spacing: -0.015em;
+        }
+        
+        /* 브랜드명 등 고유명사 줄바뿌 방지 */
+        .no-break {
+            white-space: nowrap;
+        }
+        
+        /* 중요 키워드 줄바뿌 방지 및 정렬 개선 */
+        .keep-together {
+            white-space: nowrap;
+            vertical-align: baseline;
+            display: inline-block; /* inline에서 inline-block으로 변경 */
+        }
+        
+        /* 긴 텍스트용 keep-together */
+        .keep-together-long {
+            white-space: nowrap;
+            vertical-align: baseline;
+            display: inline-block;
+            margin-right: 0; /* 오른쪽 여백 제거 */
+        }
+        
+        /* 리스트 가독성 및 정렬 개선 */
+        ul li {
+            line-height: 2.0; /* 더 넓은 줄간격 */
+            margin-bottom: 1rem; /* 더 넓은 간격 */
+            padding-left: 0.5rem;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        /* 리스트 내용 정렬 */
+        ul li .flex.items-start {
+            align-items: center;
+        }
+        
+        /* 리스트 불릿 포인트 개선 */
+        ul li::marker {
+            color: var(--accent-gold);
+        }
+        
+        /* 카드 내 텍스트 간격 개선 */
+        .card-spacing {
+            margin-bottom: 1.5rem; /* 더 좁은 간격 */
+        }
+        
+        /* 설명 텍스트 크기 개선 */
+        .description-text {
+            font-size: 1.25rem; /* 20px로 더 증가 */
+            line-height: 2.0; /* 더 넓은 줄간격 */
+            margin-bottom: 2rem;
+            letter-spacing: -0.01em;
+        }
+        
+        /* 서브 텍스트 가독성 개선 */
+        .sub-text {
+            font-size: 1.125rem;
+            line-height: 1.9;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.005em;
+        }
+        
+        /* 카드 가독성 개선 */
+        .card-title {
+            margin-bottom: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            word-break: keep-all;
+            line-height: 1.4;
+        }
+        .card-title.blue {
+            color: #60A5FA; /* 더 밝은 파란색 */
+        }
+        .card-title.green {
+            color: #34D399; /* 더 밝은 초록색 */
+        }
+        .card-title.gold {
+            color: #FBBF24; /* 더 밝은 골드색 */
+        }
+        
+        .card-icon {
+            display: inline-flex;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+            backdrop-filter: blur(8px);
+        }
+        .card-icon.blue {
+            background: rgba(96, 165, 250, 0.2);
+            color: #60A5FA;
+        }
+        .card-icon.green {
+            background: rgba(52, 211, 153, 0.2);
+            color: #34D399;
+        }
+        .card-icon.gold {
+            background: rgba(251, 191, 36, 0.2);
+            color: #FBBF24;
+        }
+        
+        .card-text {
+            font-size: 1.125rem; /* 더 큰 폰트 */
+            line-height: 1.8; /* 더 넓은 줄간격 */
+            word-break: keep-all;
+            word-wrap: break-word;
+            margin-bottom: 1rem;
+            letter-spacing: -0.005em;
+        }
+        .card-text.dark {
+            color: rgba(255, 255, 255, 0.95);
+        }
+        
+        /* 카드 내 리스트 최적화 */
+        .glass-dark ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        
+        .glass-dark ul li {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+            line-height: 1.6; /* 1.5에서 1.6으로 약간 증가 */
+            font-size: 1rem;
+        }
+        
+        .glass-dark ul li:last-child {
+            margin-bottom: 0;
+        }
+        
+        .glass-dark ul li span:first-child {
+            flex-shrink: 0;
+            margin-right: 0.5rem;
+            margin-top: 0.125rem;
+            font-size: 0.875rem;
+        }
+        
+        .glass-dark ul li span:last-child {
+            flex: 1;
+            word-break: keep-all;
+            word-wrap: break-word;
+            font-size: 1rem; /* 명시적으로 폰트 크기 지정 */
+        }
+        
+        /* glass-dark 가독성 개선 */
+        .glass-dark {
+            background: rgba(10, 22, 40, 0.9); /* 더 진하게 */
+            backdrop-filter: blur(32px) saturate(160%);
+            -webkit-backdrop-filter: blur(32px) saturate(160%);
+            border: 1.5px solid rgba(255,255,255,0.25); /* 더 밝은 테두리 */
+            box-shadow: 0 8px 32px 0 rgba(10,22,40,0.4), 0 0 40px 0 rgba(86,156,214,0.15);
+            border-radius: 2rem;
+            min-height: 180px; /* 200px에서 180px로 줄임 */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* space-between에서 flex-start로 변경 */
+        }
+        
+        /* 디버깅: 브랜드 로고 강제 스타일 (문제 시 활성화) */
+        .debug-brand {
+            background: red !important;
+            color: white !important;
+            padding: 5px !important;
+            border: 2px solid yellow !important;
+        }
+        
+        /* 네비게이션 - 어두운 배경으로 변경 */
+        .nav-blur {
+            background: rgba(10, 22, 40, 0.95) !important;
+            backdrop-filter: blur(40px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            /* 그림자 효과 강화 */
+            box-shadow: 0 2px 8px rgba(10, 22, 40, 0.3);
+        }
+        
+        .nav-link {
+            font-family: 'Montserrat', 'Noto Sans KR', sans-serif;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9) !important;
+            transition: color 0.3s ease;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+        
+        .nav-link:hover {
+            color: var(--accent-gold) !important;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        
+        /* 커스텀 스크롤바 스타일 */
+        .custom-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(156, 163, 175, 0.5);
+            border-radius: 3px;
+            transition: background 0.3s ease;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(107, 114, 128, 0.7);
+        }
+        
+        /* 모달 전용 스크롤바 - 내부 포함 */
+        .modal-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(10, 22, 40, 0.3) transparent;
+        }
+        
+        .modal-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .modal-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            margin: 8px 4px; /* 상하좌우 여백 */
+        }
+        
+        .modal-scrollbar::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, rgba(10, 22, 40, 0.4) 0%, rgba(27, 77, 62, 0.4) 100%);
+            border-radius: 3px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .modal-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, rgba(10, 22, 40, 0.6) 0%, rgba(27, 77, 62, 0.6) 100%);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        /* 모달 컨테이너 스타일 개선 */
+        .modal-container {
+            border-radius: 2rem;
+            overflow: hidden; /* 모든 내용이 모달 경계 내부에 유지 */
+        }
+        
+        /* 폼 요소 스타일 개선 */
+        .form-input {
+            transition: all 0.3s ease;
+            border: 2px solid #e5e7eb;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(10, 22, 40, 0.1);
+            transform: translateY(-1px);
+        }
+        
+        .form-input:hover {
+            border-color: #d1d5db;
+        }
+        
+        /* 모달 배경 블러 효과 강화 */
+        .modal-backdrop {
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: var(--primary-blue);
+                color: var(--white);
+            }
+            
+            .glass {
+                background: rgba(10, 22, 40, 0.95);
+                color: var(--white);
+            }
+            
+            .value-card {
+                background: rgba(255, 255, 255, 0.05);
+                color: var(--white);
+            }
+            
+            /* 네비게이션은 어두운 테마 유지 - 라이트/다크모드 관계없이 일관성 */
+            .nav-blur {
+                background: rgba(10, 22, 40, 0.95) !important;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+            }
+            
+            .brand-heading {
+                color: var(--white) !important;
+            }
+            
+            .nav-link {
+                color: rgba(255, 255, 255, 0.9) !important;
+            }
+            
+            .nav-link:hover {
+                color: var(--accent-gold) !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- 네비게이션 -->
+    <nav class="nav-blur fixed w-full z-50 py-4 px-6" role="navigation" aria-label="메인 네비게이션">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="/" class="brand-heading text-2xl" aria-label="sustainX 홈" style="display: inline-block;">
+                sustainX
+            </a>
+            <div class="hidden md:flex space-x-8">
+                <a href="#about" class="nav-link">About</a>
+                <a href="#services" class="nav-link">Services</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </div>
+            <button class="md:hidden mobile-menu-btn" aria-label="메뉴 열기" aria-expanded="false" aria-controls="mobile-menu">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- 모바일 메뉴 -->
+    <div id="mobile-menu" class="mobile-menu fixed inset-0 bg-brand-blue bg-opacity-95 z-40 transform translate-x-full transition-transform duration-300 ease-in-out">
+        <div class="container mx-auto px-6 py-8">
+            <div class="flex flex-col space-y-6">
+                <a href="#about" class="text-white text-xl font-montserrat">About</a>
+                <a href="#services" class="text-white text-xl font-montserrat">Services</a>
+                <a href="#contact" class="text-white text-xl font-montserrat">Contact</a>
+            </div>
+        </div>
+    </div>
+
+    <main id="main-content">
+        <!-- Hero Section -->
+        <section class="relative min-h-screen flex items-center bg-optimized lazy-bg rounded-none" 
+            data-bg="images/section/hero/hero-bg.jpg">
+            <div class="absolute inset-0 bg-overlay rounded-none"></div>
+            <div class="container mx-auto px-6 py-32 relative z-10">
+                <div class="max-w-3xl">
+                    <h1 class="brand-heading text-white mb-8" style="font-size:3.2rem; line-height:1.3; letter-spacing:-0.03em; word-break:keep-all;">
+                        <span class="keep-together">ESG 업무</span> 때문에 고민이신가요?
+                    </h1>
+                    <p class="font-inter mb-4 sub-text" style="font-size:1.5rem; color:#E2E8F0; font-weight:400; word-break:keep-all;">
+                        더 이상 고민하지 마세요<br>
+                        <span class="keep-together">ESG 업무</span>의 모든 것을 전문가가 함께해드립니다
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 이런 고민 있으시죠? -->
+        <div class="relative bg-optimized lazy-bg rounded-none" 
+            data-bg="images/section/diff/AdobeStock_1186836910.jpg">
+            <div class="absolute inset-0 bg-overlay rounded-none"></div>
+            
+            <section class="py-[300px] relative">
+                <div class="container mx-auto px-6">
+                    <h2 class="heading-2 text-center mb-20 text-white font-bold tracking-wide">이런 고민 있으시죠?</h2>
+                    <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                        <div class="glass-dark p-6 rounded-xl">
+                            <h3 class="text-lg font-bold text-brand-gold mb-3">ESG 규제 대응</h3>
+                            <ul class="space-y-2 text-white/90">
+                                <li class="flex items-start">
+                                    <span class="text-brand-gold mr-3 mt-1 text-sm">•</span>
+                                    <span class="text-base">복잡한 ESG 규제 대응이 막막하신가요?</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-brand-gold mr-3 mt-1 text-sm">•</span>
+                                    <span class="text-base">고객사 요구사항 충족이 어려우신가요?</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="glass-dark p-6 rounded-xl">
+                            <h3 class="text-lg font-bold text-brand-gold mb-3">ESG 업무 부담</h3>
+                            <ul class="space-y-2 text-white/90">
+                                <li class="flex items-start">
+                                    <span class="text-brand-gold mr-3 mt-1 text-sm">•</span>
+                                    <span class="text-base">ESG 업무가 많아 인력이 부족하신가요?</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-brand-gold mr-3 mt-1 text-sm">•</span>
+                                    <span class="text-base">전문성 부족으로 업무 진행이 어려우신가요?</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- 현재 담당 중인 실무 영역 -->
+        <section id="about" class="py-20 relative bg-cover bg-center bg-no-repeat rounded-none"
+            style="background-image: url('images/section/process/AdobeStock_584885060.jpg');">
+            <div class="absolute inset-0 bg-gradient-to-b from-brand-blue/90 via-brand-blue/85 to-brand-blue/90 backdrop-blur-[1px] rounded-none"></div>
+            <div class="container mx-auto px-6 relative">
+                <div class="max-w-6xl mx-auto">
+                    <div class="text-center mb-16">
+                        <h2 class="heading-2 mb-6 text-white font-bold tracking-wide">
+                            <span class="keep-together">OEM 협력사</span>라면 누구나 경험하는 <span class="keep-together">ESG 업무</span>들
+                        </h2>
+                        <p class="text-xl text-white/90 mb-3 font-medium">현재 자동차 부품사에서 직접 담당하고 있는 실무 영역입니다</p>
+                        <p class="text-lg text-white/80">체계적으로 관리하고 계신가요?</p>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <!-- OEM 온실가스 인벤토리 대응 -->
+                        <div class="glass-dark p-6 rounded-xl transform hover:scale-105 transition-transform duration-300">
+                            <div class="flex items-center mb-3">
+                                <div class="card-icon blue mr-3">
+                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-lg font-bold text-blue-400"><span class="keep-together">온실가스 인벤토리</span> 관리</h3>
+                            </div>
+                            <p class="text-white/90 mb-3 text-base leading-relaxed font-medium"><span class="keep-together">Scope 1,2,3</span> 데이터 수집부터 <span class="keep-together">탄소중립 로드맵</span>까지</p>
+                            <ul>
+                                <li>
+                                    <span class="text-blue-400">•</span>
+                                    <span>OEM 협력사 온실가스 인벤토리 연간 제출</span>
+                                </li>
+                                <li>
+                                    <span class="text-blue-400">•</span>
+                                    <span>CDP Supply Chain 프로그램 대응</span>
+                                </li>
+                                <li>
+                                    <span class="text-blue-400">•</span>
+                                    <span>탄소중립 로드맵 수립 및 관리</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <!-- OEM ESG 성과평가 대응 -->
+                        <div class="glass-dark p-6 rounded-xl transform hover:scale-105 transition-transform duration-300">
+                            <div class="flex items-center mb-3">
+                                <div class="card-icon green mr-3">
+                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-lg font-bold text-green-400"><span class="keep-together">ESG 성과평가</span> 대응</h3>
+                            </div>
+                            <p class="text-white/90 mb-3 text-base leading-relaxed font-medium">80점 이상 달성을 위한 체계적 대응</p>
+                            <ul>
+                                <li>
+                                    <span class="text-green-400">•</span>
+                                    <span>OEM 협력사 ESG 성과평가 연 1회 대응</span>
+                                </li>
+                                <li>
+                                    <span class="text-green-400">•</span>
+                                    <span>환경·사회·거버넌스 증빙자료 준비</span>
+                                </li>
+                                <li>
+                                    <span class="text-green-400">•</span>
+                                    <span>개선계획서 작성 및 실행 관리</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <!-- OEM LCA 및 친환경 소재 대응 -->
+                        <div class="glass-dark p-6 rounded-xl transform hover:scale-105 transition-transform duration-300">
+                            <div class="flex items-center mb-3">
+                                <div class="card-icon gold mr-3">
+                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-lg font-bold text-yellow-400">제품 <span class="keep-together">LCA</span> 및 <span class="keep-together">친환경 소재</span></h3>
+                            </div>
+                            <p class="text-white/90 mb-3 text-base leading-relaxed font-medium">부품별 <span class="keep-together">탄소발자국</span>부터 <span class="keep-together">친환경 로드맵</span>까지</p>
+                            <ul>
+                                <li>
+                                    <span class="text-yellow-400">•</span>
+                                    <span>주요 부품별 탄소발자국 계산</span>
+                                </li>
+                                <li>
+                                    <span class="text-yellow-400">•</span>
+                                    <span>재활용 소재 사용률 조사 및 관리</span>
+                                </li>
+                                <li>
+                                    <span class="text-yellow-400">•</span>
+                                    <span>친환경 소재 로드맵 수립</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <!-- OEM 공급망 ESG 관리 -->
+                        <div class="glass-dark p-6 rounded-xl transform hover:scale-105 transition-transform duration-300">
+                            <div class="flex items-center mb-3">
+                                <div class="card-icon blue mr-3">
+                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-lg font-bold text-blue-400">공급망 <span class="keep-together">ESG 관리</span></h3>
+                            </div>
+                            <p class="text-white/90 mb-3 text-base leading-relaxed font-medium"><span class="keep-together">2-3차 협력사</span>까지 확장되는 <span class="keep-together">ESG 관리</span></p>
+                            <ul>
+                                <li>
+                                    <span class="text-blue-400">•</span>
+                                    <span>분쟁광물 관리 및 CMRT 작성</span>
+                                </li>
+                                <li>
+                                    <span class="text-blue-400">•</span>
+                                    <span>하위 협력사 ESG 현황 조사</span>
+                                </li>
+                                <li>
+                                    <span class="text-blue-400">•</span>
+                                    <span>공급망 리스크 모니터링</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-12">
+                        <p class="text-lg text-white/90 mb-4">자동차 업계의 <span class="keep-together">ESG 요구수준</span>은 갈수록 높아지고 있습니다.</p>
+                        <p class="text-xl text-brand-gold font-bold">전문적인 대응이 필요한 시점입니다.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Our Services + 이렇게 함께합니다 통합 섹션 -->
+        <div class="relative bg-cover bg-center bg-no-repeat rounded-none" 
+            style="background-image: url('images/section/services/AdobeStock_1235752382.jpg');">
+            <div class="absolute inset-0 bg-gradient-to-b from-brand-blue/85 via-brand-blue/80 to-brand-blue/85 backdrop-blur-[1px] rounded-none"></div>
+            
+            <!-- Our Services -->
+            <section id="services" class="py-16 relative">
+                <div class="container mx-auto px-6">
+                    <h2 class="heading-2 text-center mb-12 text-white font-bold tracking-wide">Our Services</h2>
+                    <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                        <div class="glass-dark p-8 rounded-xl transform hover:scale-105 transition-transform duration-300">
+                            <div class="flex items-center mb-4">
+                                <div class="card-icon blue mr-4">
+                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                                    </svg>
+                                </div>
+                                <h3 class="card-title blue font-bold"><span class="keep-together">ESG Compliance</span></h3>
+                            </div>
+                            <p class="text-white/90 text-base leading-relaxed">고객사 <span class="keep-together">ESG 평가</span>, <span class="keep-together">온실가스 인벤토리</span>, 분쟁광물 관리 등 규제 대응</p>
+                        </div>
+                        <div class="glass-dark p-8 rounded-xl transform hover:scale-105 transition-transform duration-300">
+                            <div class="flex items-center mb-4">
+                                <div class="card-icon green mr-4">
+                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                    </svg>
+                                </div>
+                                <h3 class="card-title green font-bold"><span class="keep-together">ESG Strategy</span></h3>
+                            </div>
+                            <p class="text-white/90 text-base leading-relaxed"><span class="keep-together">탄소중립 로드맵</span>, <span class="keep-together">친환경 소재</span> 전환 등 <span class="keep-together">ESG 전략</span> 수립 및 실행</p>
+                        </div>
+                        <div class="glass-dark p-8 rounded-xl transform hover:scale-105 transition-transform duration-300">
+                            <div class="flex items-center mb-4">
+                                <div class="card-icon gold mr-4">
+                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                    </svg>
+                                </div>
+                                <h3 class="card-title gold font-bold"><span class="keep-together">ESG Reporting</span></h3>
+                            </div>
+                            <p class="text-white/90 text-base leading-relaxed">제품 <span class="keep-together">LCA</span> 계산, <span class="keep-together">ESG 보고서</span> 작성, 성과 모니터링 등 데이터 관리</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 섬션 구분자 -->
+            <div class="w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent mx-auto max-w-4xl"></div>
+
+            <!-- 이렇게 함께합니다 -->
+            <section class="py-16 relative">
+                <div class="container mx-auto px-6">
+                    <div class="text-center">
+                        <h2 class="heading-2 mb-12 text-white font-bold tracking-wide">이렇게 함께합니다</h2>
+                        <div class="grid md:grid-cols-4 gap-6 max-w-6xl mx-auto">
+                            <div class="glass-dark p-8 rounded-xl transform hover:scale-105 transition-transform duration-300">
+                                <div class="flex items-center mb-4">
+                                    <div class="card-icon green mr-4">
+                                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-green-400">현황 파악</h3>
+                                </div>
+                                <p class="text-white/90 leading-relaxed">기업 현황과 <span class="keep-together">고객사 요구사항</span>을 정확히 분석합니다</p>
+                            </div>
+                            <div class="glass-dark p-8 rounded-xl transform hover:scale-105 transition-transform duration-300">
+                                <div class="flex items-center mb-4">
+                                    <div class="card-icon green mr-4">
+                                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-green-400">맞춤 계획</h3>
+                                </div>
+                                <p class="text-white/90 leading-relaxed">기업 규모와 업종에 맞는 <span class="keep-together">ESG 대응</span> 계획을 수립합니다</p>
+                            </div>
+                            <div class="glass-dark p-8 rounded-xl transform hover:scale-105 transition-transform duration-300">
+                                <div class="flex items-center mb-4">
+                                    <div class="card-icon green mr-4">
+                                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-green-400">전문 대행</h3>
+                                </div>
+                                <p class="text-white/90 leading-relaxed"><span class="keep-together">온실가스 관리</span>부터 보고서 작성까지 모든 업무를 처리합니다</p>
+                            </div>
+                            <div class="glass-dark p-8 rounded-xl transform hover:scale-105 transition-transform duration-300">
+                                <div class="flex items-center mb-4">
+                                    <div class="card-icon green mr-4">
+                                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-green-400">지속 관리</h3>
+                                </div>
+                                <p class="text-white/90 leading-relaxed">정기적인 업데이트와 <span class="keep-together">새로운 요구사항</span>에 대응합니다</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Contact: 어떻게 시작할 것인가 -->
+        <section id="contact" class="relative bg-cover bg-center bg-no-repeat rounded-none" 
+            style="background-image: url('images/section/cta/cta-bg.jpg');">
+            <div class="absolute inset-0 bg-gradient-to-b from-brand-blue/85 via-brand-blue/80 to-brand-blue/85 backdrop-blur-[1px] rounded-none"></div>
+            
+            <!-- Comply. Connect. Compete. -->
+            <div class="relative py-24">
+                <div class="container mx-auto px-6">
+                    <h2 class="heading-2 text-center mb-16 text-white font-bold tracking-wide">Comply. Connect. Compete.</h2>
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <div class="glass-dark p-6 rounded-xl transform hover:scale-105 transition-transform duration-300">
+                            <div class="flex items-center mb-3">
+                                <div class="card-icon blue mr-3">
+                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-lg font-bold text-blue-400">COMPLY</h3>
+                            </div>
+                            <p class="text-white/90 text-base leading-relaxed"><span class="keep-together">고객사 요구사항</span>을 완벽하게 충족시켜드립니다</p>
+                        </div>
+                        <div class="glass-dark p-6 rounded-xl transform hover:scale-105 transition-transform duration-300">
+                            <div class="flex items-center mb-3">
+                                <div class="card-icon green mr-3">
+                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-lg font-bold text-green-400">CONNECT</h3>
+                            </div>
+                            <p class="text-white/90 text-base leading-relaxed"><span class="keep-together">ESG 전문가</span>가 직접 맞춤형 업무를 처리합니다</p>
+                        </div>
+                        <div class="glass-dark p-6 rounded-xl transform hover:scale-105 transition-transform duration-300">
+                            <div class="flex items-center mb-3">
+                                <div class="card-icon gold mr-3">
+                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-lg font-bold text-yellow-400">COMPETE</h3>
+                            </div>
+                            <p class="text-white/90 text-base leading-relaxed"><span class="keep-together">ESG 대응</span>으로 기업의 완성도를 높여 갑니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ESG 업무, 이제 우리가 함께합니다 -->
+            <div class="relative py-24">
+                <div class="container mx-auto px-6">
+                    <div class="max-w-3xl mx-auto text-center">
+                        <h2 class="heading-2 mb-8 text-white font-bold tracking-wide"><span class="keep-together">ESG 업무</span>, 이제 우리가 함께합니다</h2>
+                        <p class="description-text text-white/90 mb-12">복잡한 <span class="keep-together">ESG 업무</span>를 전문가가 직접 처리해드립니다.<br>별도 인력 채용 없이 <span class="keep-together">ESG 전담팀</span> 효과를 경험하세요.</p>
+                        <button id="inquiry-btn" class="glass inline-block text-xl px-8 py-4 rounded-full text-white hover:bg-white/20 transition-colors duration-300 cursor-pointer">
+                            무료 상담 신청하기
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <div class="relative py-12 rounded-none">
+        <div class="absolute inset-0 bg-brand-blue/95 rounded-none pointer-events-none"></div>
+        <div class="container mx-auto px-6 relative text-white">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-8">
+                    <span class="text-xl font-bold text-white">sustainX</span>
+                    <span class="text-white/60">|</span>
+                    <span class="text-white/90">The Supply Chain ESG Partner</span>
+                </div>
+                <div class="flex items-center gap-8 text-sm">
+                    <span class="text-white/90">contact@sustainx.co.kr</span>
+                    <span class="text-white/60">|</span>
+                    <span class="text-white/80">충청남도 천안시 서북구</span>
+                    <span class="text-white/60">|</span>
+                    <span class="text-white/70 cursor-pointer" id="admin-link">&copy; 2025 sustainX Corp.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 관리자 로그인 모달 -->
+    <div id="admin-login-modal" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white modal-container max-w-md w-full shadow-2xl rounded-2xl">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold text-brand-blue">관리자 로그인</h3>
+                    <button id="close-admin-modal" class="text-gray-400 hover:text-gray-600 text-2xl transition-colors duration-200">&times;</button>
+                </div>
+                
+                <form id="admin-login-form" class="space-y-4">
+                    <div>
+                        <label for="admin-password" class="block text-sm font-semibold text-gray-800 mb-2">비밀번호</label>
+                        <input 
+                            type="password" 
+                            id="admin-password" 
+                            name="password" 
+                            required 
+                            class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 transition-all"
+                            placeholder="관리자 비밀번호를 입력하세요"
+                            autocomplete="current-password"
+                        >
+                    </div>
+                    
+                    <div id="login-error" class="text-red-600 text-sm hidden">
+                        비밀번호가 올바르지 않습니다.
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-brand-blue text-white py-3 px-6 rounded-lg hover:bg-brand-green transition-all duration-300 font-semibold">
+                        로그인
+                    </button>
+                </form>
+                
+                <div class="mt-6 pt-4 border-t border-gray-200 text-center">
+                    <p class="text-xs text-gray-500">
+                        관리자만 접근 가능합니다.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 문의 접수 모달 -->
+    <div id="inquiry-modal" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white modal-container max-w-lg w-full max-h-[90vh] shadow-2xl rounded-2xl">
+            <div class="modal-scrollbar max-h-[90vh] overflow-y-auto">
+                <div class="p-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-2xl font-bold text-brand-blue">무료 상담 신청</h3>
+                        <button id="close-modal" class="text-gray-400 hover:text-gray-600 text-2xl transition-colors duration-200 hover:scale-110">&times;</button>
+                    </div>
+                
+                <form id="inquiry-form" class="space-y-5">
+                    <!-- 기본 정보 그룹 -->
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="company" class="block text-sm font-semibold text-gray-800 mb-2">회사명 *</label>
+                            <input type="text" id="company" name="company" required class="form-input w-full px-4 py-3 rounded-lg text-sm border-2 border-gray-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20">
+                        </div>
+                        <div>
+                            <label for="name" class="block text-sm font-semibold text-gray-800 mb-2">담당자명 *</label>
+                            <input type="text" id="name" name="name" required class="form-input w-full px-4 py-3 rounded-lg text-sm border-2 border-gray-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20">
+                        </div>
+                    </div>
+                    
+                    <!-- 연락처 정보 그룹 -->
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="email" class="block text-sm font-semibold text-gray-800 mb-2">이메일 *</label>
+                            <input type="email" id="email" name="email" required class="form-input w-full px-4 py-3 rounded-lg text-sm border-2 border-gray-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20">
+                        </div>
+                        <div>
+                            <label for="phone" class="block text-sm font-semibold text-gray-800 mb-2">연락처</label>
+                            <input type="tel" id="phone" name="phone" class="form-input w-full px-4 py-3 rounded-lg text-sm border-2 border-gray-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20">
+                        </div>
+                    </div>
+                    
+                    <!-- 직책 및 회사 정보 그룹 -->
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="position" class="block text-sm font-semibold text-gray-800 mb-2">직책</label>
+                            <input type="text" id="position" name="position" placeholder="예: 대리, 과장, 팀장 등" class="form-input w-full px-4 py-3 rounded-lg text-sm border-2 border-gray-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20">
+                        </div>
+                        <div>
+                            <label for="industry" class="block text-sm font-semibold text-gray-800 mb-2">업종</label>
+                            <select id="industry" name="industry" class="form-input w-full px-4 py-3 rounded-lg text-sm border-2 border-gray-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20">
+                                <option value="">선택해주세요</option>
+                                <option value="automotive">자동차/부품</option>
+                                <option value="electronics">전자/전기</option>
+                                <option value="manufacturing">제조업</option>
+                                <option value="chemical">화학/소재</option>
+                                <option value="other">기타</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- ESG 고민사항 -->
+                    <div>
+                        <label for="concern" class="block text-sm font-semibold text-gray-800 mb-2">주요 ESG 고민사항 *</label>
+                        <textarea id="concern" name="concern" required rows="4" class="form-input w-full px-4 py-3 rounded-lg resize-none text-sm border-2 border-gray-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20" placeholder="예: 고객사 ESG 평가 대응, 온실가스 인벤토리 구축, 책임광물 관리 등"></textarea>
+                    </div>
+                    
+                    <!-- 희망 상담 시기 (간소화) -->
+                    <div>
+                        <label for="consultation-time" class="block text-sm font-semibold text-gray-800 mb-2">희망 상담 시기</label>
+                        <select id="consultation-time" name="consultationTime" class="form-input w-full px-4 py-3 rounded-lg text-sm border-2 border-gray-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20">
+                            <option value="">선택해주세요</option>
+                            <option value="immediately">최대한 빠른 시일 내</option>
+                            <option value="next-week">다음 주 내</option>
+                            <option value="this-month">이번 달 내</option>
+                            <option value="flexible">유연하게 조정 가능</option>
+                        </select>
+                    </div>
+                    
+                    <!-- 개인정보 동의 -->
+                    <div class="flex items-start pt-4">
+                        <input type="checkbox" id="privacy" name="privacy" required class="mt-1 mr-3 w-4 h-4 text-brand-blue focus:ring-brand-blue border-gray-300 rounded">
+                        <label for="privacy" class="text-sm text-gray-700 leading-normal">
+                            개인정보 수집 및 이용에 동의합니다. (수집된 정보는 상담 목적으로만 사용됩니다)
+                        </label>
+                    </div>
+                    
+                    <!-- 제출 버튼 -->
+                    <button type="submit" class="w-full bg-brand-blue text-white py-4 px-8 rounded-lg hover:bg-brand-green transition-all duration-300 font-semibold text-lg transform hover:scale-[1.02] hover:shadow-lg">
+                        상담 신청하기
+                    </button>
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 성공 메시지 모달 -->
+    <div id="success-modal" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white max-w-md w-full shadow-2xl rounded-2xl">
+            <div class="p-8 text-center">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 transform animate-pulse">
+                    <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-brand-blue mb-2">상담 신청 완료!</h3>
+                <p class="text-gray-600 mb-6">입력해주신 정보를 바탕으로<br>24시간 내에 연락드리겠습니다.</p>
+                <button id="close-success" class="bg-brand-blue text-white py-3 px-8 rounded-lg hover:bg-brand-green transition-all duration-300 transform hover:scale-105 font-semibold">
+                    확인
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 오프라인 상태 배너 -->
+    <div id="offline-banner" class="fixed bottom-0 left-0 right-0 bg-red-500 text-white py-2 px-4 text-center hidden">
+        오프라인 상태입니다. 인터넷 연결을 확인해주세요.
+    </div>
+
+    <script>
+        // 모바일 메뉴 토글
+        const menuButton = document.querySelector('button[aria-controls="mobile-menu"]');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        menuButton.addEventListener('click', () => {
+            const isExpanded = menuButton.getAttribute('aria-expanded') === 'true';
+            menuButton.setAttribute('aria-expanded', !isExpanded);
+            mobileMenu.classList.toggle('translate-x-full');
+        });
+
+        // 모바일 메뉴 링크 클릭 시 메뉴 닫기
+        const mobileMenuLinks = document.querySelectorAll('#mobile-menu a');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('translate-x-full');
+                menuButton.setAttribute('aria-expanded', 'false');
+            });
+        });
+
+        // 스크롤 애니메이션
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+        // 관리자 로그인 기능
+        const adminLink = document.getElementById('admin-link');
+        const adminLoginModal = document.getElementById('admin-login-modal');
+        const closeAdminModal = document.getElementById('close-admin-modal');
+        const adminLoginForm = document.getElementById('admin-login-form');
+        const loginError = document.getElementById('login-error');
+        
+        // 관리자 비밀번호 (실제 운영에서는 더 안전한 방법 사용 권장)
+        const ADMIN_PASSWORD = 'sustainx2024!';
+        
+        // 관리자 링크 클릭 (저작권 표시를 클릭하면 로그인 모달 열리기)
+        adminLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            adminLoginModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            // 비밀번호 입력 필드에 포커스
+            document.getElementById('admin-password').focus();
+        });
+        
+        // 관리자 로그인 모달 닫기
+        closeAdminModal.addEventListener('click', () => {
+            adminLoginModal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            adminLoginForm.reset();
+            loginError.classList.add('hidden');
+        });
+        
+        // 모달 외부 클릭 시 닫기
+        adminLoginModal.addEventListener('click', (e) => {
+            if (e.target === adminLoginModal) {
+                adminLoginModal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+                adminLoginForm.reset();
+                loginError.classList.add('hidden');
+            }
+        });
+        
+        // 관리자 로그인 처리
+        adminLoginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const password = document.getElementById('admin-password').value;
+            
+            if (password === ADMIN_PASSWORD) {
+                // 로그인 성공
+                localStorage.setItem('adminLoggedIn', 'true');
+                localStorage.setItem('adminLoginTime', new Date().getTime().toString());
+                
+                // 관리자 페이지로 이동
+                window.location.href = 'admin.html';
+            } else {
+                // 로그인 실패
+                loginError.classList.remove('hidden');
+                document.getElementById('admin-password').value = '';
+                document.getElementById('admin-password').focus();
+                
+                // 3초 후 에러 메시지 숨기기
+                setTimeout(() => {
+                    loginError.classList.add('hidden');
+                }, 3000);
+            }
+        });
+        
+        // Enter 키로 로그인 제출
+        document.getElementById('admin-password').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                adminLoginForm.dispatchEvent(new Event('submit'));
+            }
+        });
+
+        // 문의 접수 모달 기능
+        const inquiryBtn = document.getElementById('inquiry-btn');
+        const inquiryModal = document.getElementById('inquiry-modal');
+        const successModal = document.getElementById('success-modal');
+        const closeModal = document.getElementById('close-modal');
+        const closeSuccess = document.getElementById('close-success');
+        const inquiryForm = document.getElementById('inquiry-form');
+
+        // 모달 열기
+        inquiryBtn.addEventListener('click', () => {
+            inquiryModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        });
+
+        // 모달 닫기
+        closeModal.addEventListener('click', () => {
+            inquiryModal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        });
+
+        closeSuccess.addEventListener('click', () => {
+            successModal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        });
+
+        // 모달 외부 클릭 시 닫기
+        inquiryModal.addEventListener('click', (e) => {
+            if (e.target === inquiryModal) {
+                inquiryModal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        successModal.addEventListener('click', (e) => {
+            if (e.target === successModal) {
+                successModal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // 문의 접수 처리
+        inquiryForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(inquiryForm);
+            const inquiry = {
+                id: Date.now().toString(),
+                timestamp: new Date().toISOString(),
+                company: formData.get('company'),
+                name: formData.get('name'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                position: formData.get('position'),
+                industry: formData.get('industry'),
+                concern: formData.get('concern'),
+                consultationTime: formData.get('consultationTime'),
+                status: 'new'
+            };
+
+            try {
+                // 로칼 스토리지에 저장
+                const existingInquiries = JSON.parse(localStorage.getItem('inquiries') || '[]');
+                existingInquiries.push(inquiry);
+                localStorage.setItem('inquiries', JSON.stringify(existingInquiries));
+
+                // 콘솔에 로그 출력 (개발자가 확인할 수 있도록)
+                console.log('새로운 문의 접수:', inquiry);
+                console.log('전체 문의 목록:', existingInquiries);
+
+                // 이메일 전송 시뮤레이션 (EmailJS 등을 사용하여 실제 이메일 전송 가능)
+                await sendEmailNotification(inquiry);
+
+                // 성공 모달 표시
+                inquiryModal.classList.add('hidden');
+                successModal.classList.remove('hidden');
+                
+                // 폼 초기화
+                inquiryForm.reset();
+                
+            } catch (error) {
+                console.error('문의 접수 오류:', error);
+                alert('문의 접수 중 오류가 발생했습니다. 다시 시도해주세요.');
+            }
+        });
+
+        // 이메일 전송 함수 (시뮤레이션)
+        async function sendEmailNotification(inquiry) {
+            // 실제 이메일 전송을 위해서는 EmailJS, Formspree, 또는 백엔드 API를 사용
+            console.log('이메일 전송 시뮤레이션:', {
+                to: 'contact@sustainX.co.kr',
+                subject: `[새 문의] ${inquiry.company} - ${inquiry.name}`,
+                body: `
+회사명: ${inquiry.company}
+담당자: ${inquiry.name}
+직책: ${inquiry.position}
+이메일: ${inquiry.email}
+연락처: ${inquiry.phone}
+업종: ${inquiry.industry}
+ESG 고민사항: ${inquiry.concern}
+희망 상담시기: ${inquiry.consultationTime}
+접수시간: ${inquiry.timestamp}
+                `
+            });
+            
+            // 실제 구현 시에는 아래와 같이 EmailJS 사용
+            /*
+            return emailjs.send('service_id', 'template_id', {
+                company: inquiry.company,
+                name: inquiry.name,
+                position: inquiry.position,
+                email: inquiry.email,
+                phone: inquiry.phone,
+                industry: inquiry.industry,
+                concern: inquiry.concern,
+                consultationTime: inquiry.consultationTime
+            });
+            */
+        }
+
+        // 문의 목록 조회 함수 (어드민용)
+        function getInquiries() {
+            return JSON.parse(localStorage.getItem('inquiries') || '[]');
+        }
+
+        // 문의 상태 업데이트 함수 (어드민용)
+        function updateInquiryStatus(id, status) {
+            const inquiries = getInquiries();
+            const inquiry = inquiries.find(i => i.id === id);
+            if (inquiry) {
+                inquiry.status = status;
+                inquiry.updatedAt = new Date().toISOString();
+                localStorage.setItem('inquiries', JSON.stringify(inquiries));
+            }
+        }
+
+        // 오프라인 상태 감지
+        window.addEventListener('online', () => {
+            document.getElementById('offline-banner').classList.add('hidden');
+        });
+        
+        window.addEventListener('offline', () => {
+            document.getElementById('offline-banner').classList.remove('hidden');
+        });
+
+        // 서비스 워커 등록
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+
+        // 향상된 배경 이미지 레이지 로딩
+        function initOptimizedBackgroundLoading() {
+            // WebP 지원 여부 확인
+            function supportsWebP() {
+                const canvas = document.createElement('canvas');
+                canvas.width = 1;
+                canvas.height = 1;
+                return canvas.toDataURL('image/webp').indexOf('data:image/webp') === 0;
+            }
+            
+            const webpSupported = supportsWebP();
+            
+            // 배경 이미지 로딩 관찰자
+            const bgImageObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const element = entry.target;
+                        const bgImage = element.dataset.bg;
+                        
+                        if (bgImage) {
+                            // WebP 지원 시 확장자 변경 시도
+                            const optimizedImage = webpSupported ? 
+                                bgImage.replace(/\.(jpe?g|png)$/i, '.webp') : bgImage;
+                            
+                            // 이미지 프리로드
+                            const img = new Image();
+                            
+                            img.onload = () => {
+                                element.style.backgroundImage = `url(${optimizedImage})`;
+                                element.classList.add('loaded');
+                                
+                                // 성능 로그
+                                console.log(`Background loaded: ${optimizedImage}`);
+                            };
+                            
+                            img.onerror = () => {
+                                // WebP 실패 시 원본 이미지 시도
+                                if (optimizedImage !== bgImage) {
+                                    const fallbackImg = new Image();
+                                    fallbackImg.onload = () => {
+                                        element.style.backgroundImage = `url(${bgImage})`;
+                                        element.classList.add('loaded');
+                                    };
+                                    fallbackImg.src = bgImage;
+                                } else {
+                                    console.error(`Failed to load background: ${bgImage}`);
+                                    element.classList.add('loaded'); // 오류 상태라도 로딩 표시 제거
+                                }
+                            };
+                            
+                            img.src = optimizedImage;
+                        }
+                        
+                        bgImageObserver.unobserve(element);
+                    }
+                });
+            }, {
+                rootMargin: '100px', // 100px 전에 미리 로딩
+                threshold: 0.1
+            });
+            
+            // 모든 lazy-bg 요소에 관찰자 적용
+            document.querySelectorAll('.lazy-bg[data-bg]').forEach(el => {
+                bgImageObserver.observe(el);
+            });
+        }
+        
+        // DOM 로드 완료 후 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            initOptimizedBackgroundLoading();
+            
+            // 브랜드 로고 즉시 체크
+            setTimeout(() => {
+                const brandElement = document.querySelector('.brand-heading');
+                if (brandElement) {
+                    const rect = brandElement.getBoundingClientRect();
+                    const styles = window.getComputedStyle(brandElement);
+                    console.log('브랜드 위치:', rect);
+                    console.log('브랜드 색상:', styles.color);
+                    console.log('브랜드 투명도:', styles.opacity);
+                }
+            }, 500);
+        });
+        
+        // 이미지 최적화 성능 모니터링
+        function logPerformanceMetrics() {
+            if ('performance' in window) {
+                window.addEventListener('load', () => {
+                    setTimeout(() => {
+                        const perfData = performance.getEntriesByType('navigation')[0];
+                        console.log('Page Load Performance:', {
+                            loadTime: perfData.loadEventEnd - perfData.loadEventStart,
+                            domContentLoaded: perfData.domContentLoadedEventEnd - perfData.domContentLoadedEventStart,
+                            totalTime: perfData.loadEventEnd - perfData.fetchStart
+                        });
+                    }, 0);
+                });
+            }
+        }
+        
+        logPerformanceMetrics();
+        
+        // 네비게이션 디버깅 함수
+        function debugNavigation() {
+            const brandElement = document.querySelector('.brand-heading');
+            const navElement = document.querySelector('.nav-blur');
+            
+            console.log('=== 네비게이션 디버깅 ===');
+            console.log('브랜드 요소:', brandElement);
+            console.log('브랜드 스타일:', window.getComputedStyle(brandElement));
+            console.log('네비 요소:', navElement);
+            console.log('네비 스타일:', window.getComputedStyle(navElement));
+            
+            // 색상 확인
+            const color = window.getComputedStyle(brandElement).color;
+            const backgroundColor = window.getComputedStyle(navElement).backgroundColor;
+            console.log('브랜드 색상:', color);
+            console.log('배경 색상:', backgroundColor);
+            
+            // 폰트 확인
+            const fontFamily = window.getComputedStyle(brandElement).fontFamily;
+            const fontWeight = window.getComputedStyle(brandElement).fontWeight;
+            console.log('폰트 패밀리:', fontFamily);
+            console.log('폰트 가중치:', fontWeight);
+            
+            // 가시성 확인
+            const visibility = window.getComputedStyle(brandElement).visibility;
+            const opacity = window.getComputedStyle(brandElement).opacity;
+            const display = window.getComputedStyle(brandElement).display;
+            console.log('가시성:', visibility);
+            console.log('투명도:', opacity);
+            console.log('디스플레이:', display);
+            
+            return {
+                brandElement,
+                navElement,
+                computedStyles: {
+                    color,
+                    backgroundColor,
+                    fontFamily,
+                    fontWeight,
+                    visibility,
+                    opacity,
+                    display
+                }
+            };
+        }
+        
+        // 긴급 수정 함수
+        function fixBrandVisibility() {
+            const brandElement = document.querySelector('.brand-heading');
+            if (brandElement) {
+                brandElement.style.color = '#0A1628';
+                brandElement.style.fontWeight = '800';
+                brandElement.style.fontSize = '1.5rem';
+                brandElement.style.display = 'inline-block';
+                brandElement.style.visibility = 'visible';
+                brandElement.style.opacity = '1';
+                brandElement.style.zIndex = '999';
+                console.log('브랜드 로고 강제 수정 완료');
+            }
+        }
+        
+        // 브랜드 하이라이트
+        function highlightBrand() {
+            const brandElement = document.querySelector('.brand-heading');
+            if (brandElement) {
+                brandElement.classList.add('debug-brand');
+                setTimeout(() => {
+                    brandElement.classList.remove('debug-brand');
+                }, 3000);
+            }
+        }
+        
+        // 개발자용 콘솔 명령어 (브라우저 콘솔에서 사용)
+        window.sustainX = {
+            getInquiries: getInquiries,
+            updateInquiryStatus: updateInquiryStatus,
+            webpSupported: document.createElement('canvas').toDataURL('image/webp').indexOf('data:image/webp') === 0,
+            exportInquiries: () => {
+                const inquiries = getInquiries();
+                const dataStr = JSON.stringify(inquiries, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                
+                const exportFileDefaultName = `sustainx-inquiries-${new Date().toISOString().split('T')[0]}.json`;
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+            },
+            // 네비게이션 디버깅 함수들
+            debugNav: debugNavigation,
+            fixBrand: fixBrandVisibility,
+            highlightBrand: highlightBrand
+        };
+        
+        // 페이지 로드 시 자동 체크
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const brandElement = document.querySelector('.brand-heading');
+                if (brandElement) {
+                    const computedColor = window.getComputedStyle(brandElement).color;
+                    const computedOpacity = window.getComputedStyle(brandElement).opacity;
+                    if (computedOpacity === '0' || computedColor === 'rgba(0, 0, 0, 0)') {
+                        console.warn('⚠️ 브랜드 로고가 보이지 않습니다. sustainX.fixBrand() 를 실행하세요.');
+                    }
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
