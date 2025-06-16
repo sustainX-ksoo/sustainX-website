@@ -1,9 +1,3 @@
-// Firebase SDK 초기화
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { getFirestore } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
-
 // Firebase 설정
 const firebaseConfig = {
   apiKey: "AIzaSyDuVkIg1u06OBEDko6ajZaUzlIidBiNHtQ",
@@ -39,4 +33,4 @@ try {
     
 } catch (error) {
     console.error('Firebase 초기화 오류:', error);
-} 
+}
