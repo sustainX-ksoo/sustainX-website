@@ -241,6 +241,88 @@
             color: #888 !important;
             opacity: 1;
         }
+        
+        /* 커스텀 스크롤바 스타일 */
+        .custom-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(10, 22, 40, 0.3) transparent;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+            border-radius: 3px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(10, 22, 40, 0.3);
+            border-radius: 3px;
+            transition: background 0.2s ease;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(10, 22, 40, 0.5);
+        }
+        
+        /* 모달 컨테이너 개선 */
+        .modal-container {
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            background: transparent;
+        }
+        
+        /* 폼 입력 요소 개선 */
+        .form-input {
+            color: #222 !important;
+            background: #fff;
+        }
+        
+        .form-input::placeholder {
+            color: #888 !important;
+            opacity: 1;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(10, 22, 40, 0.1);
+        }
+        
+        /* 모바일 최적화 */
+        @media (max-width: 768px) {
+            .modal-container {
+                max-height: 95vh;
+                margin: 0.5rem;
+            }
+            
+            .custom-scrollbar {
+                max-height: 65vh;
+            }
+        }
+        
+        /* 애니메이션 개선 */
+        .modal-backdrop {
+            backdrop-filter: blur(4px);
+            transition: all 0.3s ease;
+        }
+        
+        .modal-container > div {
+            transition: all 0.3s ease;
+        }
+        
+        /* 접근성 개선 */
+        .form-input:focus-visible {
+            outline: 2px solid #0A1628;
+            outline-offset: 2px;
+        }
+        
+        button:focus-visible {
+            outline: 2px solid #0A1628;
+            outline-offset: 2px;
+        }
     </style>
     
     <!-- 폰트 로딩 -->
@@ -401,111 +483,119 @@
                     
                     <div class="grid md:grid-cols-2 gap-8">
                         <!-- OEM 온실가스 인벤토리 대응 -->
-                        <div class="glass-dark p-6 rounded-xl transform hover:scale-105 transition-transform duration-300">
-                            <div class="flex items-center mb-3">
-                                <div class="card-icon blue mr-3">
+                        <div class="glass-dark p-8 rounded-xl transform hover:scale-105 transition-transform duration-300">
+                            <div class="flex items-center mb-6">
+                                <div class="card-icon blue mr-4">
                                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
                                 </div>
-                                <h3 class="text-lg font-bold text-blue-400"><span class="keep-together">온실가스 인벤토리</span> 관리</h3>
+                                <h3 class="text-xl font-bold text-blue-400 leading-tight"><span class="keep-together">온실가스 인벤토리</span> 관리</h3>
                             </div>
-                            <p class="text-white/90 mb-3 text-base leading-relaxed font-medium"><span class="keep-together">Scope 1,2,3</span> 데이터 수집부터 <span class="keep-together">탄소중립 로드맵</span>까지</p>
-                            <ul>
-                                <li>
-                                    <span class="text-blue-400">•</span>
-                                    <span>OEM 협력사 온실가스 인벤토리 연간 제출</span>
-                                </li>
-                                <li>
-                                    <span class="text-blue-400">•</span>
-                                    <span>CDP Supply Chain 프로그램 대응</span>
-                                </li>
-                                <li>
-                                    <span class="text-blue-400">•</span>
-                                    <span>탄소중립 로드맵 수립 및 관리</span>
-                                </li>
-                            </ul>
+                            <div class="space-y-5">
+                                <p class="text-white/90 text-base leading-relaxed font-medium"><span class="keep-together">Scope 1,2,3</span> 데이터 수집부터 <span class="keep-together">탄소중립 로드맵</span>까지</p>
+                                <ul class="space-y-4">
+                                    <li class="flex items-start">
+                                        <span class="text-blue-400 mr-3 mt-2 text-xs">•</span>
+                                        <span class="text-white/90 text-sm leading-relaxed">OEM 협력사 온실가스 인벤토리 연간 제출</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <span class="text-blue-400 mr-3 mt-2 text-xs">•</span>
+                                        <span class="text-white/90 text-sm leading-relaxed">CDP Supply Chain 프로그램 대응</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <span class="text-blue-400 mr-3 mt-2 text-xs">•</span>
+                                        <span class="text-white/90 text-sm leading-relaxed">탄소중립 로드맵 수립 및 관리</span>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                         
                         <!-- OEM ESG 성과평가 대응 -->
-                        <div class="glass-dark p-6 rounded-xl transform hover:scale-105 transition-transform duration-300">
-                            <div class="flex items-center mb-3">
-                                <div class="card-icon green mr-3">
+                        <div class="glass-dark p-8 rounded-xl transform hover:scale-105 transition-transform duration-300">
+                            <div class="flex items-center mb-6">
+                                <div class="card-icon green mr-4">
                                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
                                 </div>
-                                <h3 class="text-lg font-bold text-green-400"><span class="keep-together">ESG 성과평가</span> 대응</h3>
+                                <h3 class="text-xl font-bold text-green-400 leading-tight"><span class="keep-together">ESG 성과평가</span> 대응</h3>
                             </div>
-                            <p class="text-white/90 mb-3 text-base leading-relaxed font-medium">80점 이상 달성을 위한 체계적 대응</p>
-                            <ul>
-                                <li>
-                                    <span class="text-green-400">•</span>
-                                    <span>OEM 협력사 ESG 성과평가 연 1회 대응</span>
-                                </li>
-                                <li>
-                                    <span class="text-green-400">•</span>
-                                    <span>환경·사회·거버넌스 증빙자료 준비</span>
-                                </li>
-                                <li>
-                                    <span class="text-green-400">•</span>
-                                    <span>개선계획서 작성 및 실행 관리</span>
-                                </li>
-                            </ul>
+                            <div class="space-y-5">
+                                <p class="text-white/90 text-base leading-relaxed font-medium">고득점 달성을 위한 체계적 대응</p>
+                                <ul class="space-y-4">
+                                    <li class="flex items-start">
+                                        <span class="text-green-400 mr-3 mt-2 text-xs">•</span>
+                                        <span class="text-white/90 text-sm leading-relaxed">OEM 협력사 ESG 성과평가 연 1회 대응</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <span class="text-green-400 mr-3 mt-2 text-xs">•</span>
+                                        <span class="text-white/90 text-sm leading-relaxed">환경·사회·거버넌스 증빙자료 준비</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <span class="text-green-400 mr-3 mt-2 text-xs">•</span>
+                                        <span class="text-white/90 text-sm leading-relaxed">ESG 체계 구축 및 전략 수립</span>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                         
                         <!-- OEM LCA 및 친환경 소재 대응 -->
-                        <div class="glass-dark p-6 rounded-xl transform hover:scale-105 transition-transform duration-300">
-                            <div class="flex items-center mb-3">
-                                <div class="card-icon gold mr-3">
+                        <div class="glass-dark p-8 rounded-xl transform hover:scale-105 transition-transform duration-300">
+                            <div class="flex items-center mb-6">
+                                <div class="card-icon gold mr-4">
                                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                                     </svg>
                                 </div>
-                                <h3 class="text-lg font-bold text-yellow-400">제품 <span class="keep-together">LCA</span> 및 <span class="keep-together">친환경 소재</span></h3>
+                                <h3 class="text-xl font-bold text-yellow-400 leading-tight">제품 <span class="keep-together">LCA 산정</span></h3>
                             </div>
-                            <p class="text-white/90 mb-3 text-base leading-relaxed font-medium">부품별 <span class="keep-together">탄소발자국</span>부터 <span class="keep-together">친환경 로드맵</span>까지</p>
-                            <ul>
-                                <li>
-                                    <span class="text-yellow-400">•</span>
-                                    <span>주요 부품별 탄소발자국 계산</span>
-                                </li>
-                                <li>
-                                    <span class="text-yellow-400">•</span>
-                                    <span>재활용 소재 사용률 조사 및 관리</span>
-                                </li>
-                                <li>
-                                    <span class="text-yellow-400">•</span>
-                                    <span>친환경 소재 로드맵 수립</span>
-                                </li>
-                            </ul>
+                            <div class="space-y-5">
+                                <p class="text-white/90 text-base leading-relaxed font-medium">부품별 <span class="keep-together">전과정 탄소발자국</span> 산정 및 결과 제공</p>
+                                <ul class="space-y-4">
+                                    <li class="flex items-start">
+                                        <span class="text-yellow-400 mr-3 mt-2 text-xs">•</span>
+                                        <span class="text-white/90 text-sm leading-relaxed">주요 부품별 LCA 데이터 수집 및 분석</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <span class="text-yellow-400 mr-3 mt-2 text-xs">•</span>
+                                        <span class="text-white/90 text-sm leading-relaxed">원자재 생산부터 폐기 단계까지 전과정 평가</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <span class="text-yellow-400 mr-3 mt-2 text-xs">•</span>
+                                        <span class="text-white/90 text-sm leading-relaxed">OEM 요구 맞춤형 LCA 보고서 작성</span>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                         
                         <!-- OEM 공급망 ESG 관리 -->
-                        <div class="glass-dark p-6 rounded-xl transform hover:scale-105 transition-transform duration-300">
-                            <div class="flex items-center mb-3">
-                                <div class="card-icon blue mr-3">
+                        <div class="glass-dark p-8 rounded-xl transform hover:scale-105 transition-transform duration-300">
+                            <div class="flex items-center mb-6">
+                                <div class="card-icon blue mr-4">
                                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                     </svg>
                                 </div>
-                                <h3 class="text-lg font-bold text-blue-400">공급망 <span class="keep-together">ESG 관리</span></h3>
+                                <h3 class="text-xl font-bold text-blue-400 leading-tight">공급망 <span class="keep-together">ESG 관리</span></h3>
                             </div>
-                            <p class="text-white/90 mb-3 text-base leading-relaxed font-medium"><span class="keep-together">2-3차 협력사</span>까지 확장되는 <span class="keep-together">ESG 관리</span></p>
-                            <ul>
-                                <li>
-                                    <span class="text-blue-400">•</span>
-                                    <span>분쟁광물 관리 및 CMRT 작성</span>
-                                </li>
-                                <li>
-                                    <span class="text-blue-400">•</span>
-                                    <span>하위 협력사 ESG 현황 조사</span>
-                                </li>
-                                <li>
-                                    <span class="text-blue-400">•</span>
-                                    <span>공급망 리스크 모니터링</span>
-                                </li>
-                            </ul>
+                            <div class="space-y-5">
+                                <p class="text-white/90 text-base leading-relaxed font-medium">업스트림-다운스트림 유기적 <span class="keep-together">ESG 대응</span> 체계 구축</p>
+                                <ul class="space-y-4">
+                                    <li class="flex items-start">
+                                        <span class="text-blue-400 mr-3 mt-2 text-xs">•</span>
+                                        <span class="text-white/90 text-sm leading-relaxed">책임광물 및 분쟁광물 관리체계 구축</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <span class="text-blue-400 mr-3 mt-2 text-xs">•</span>
+                                        <span class="text-white/90 text-sm leading-relaxed">하위 협력사 ESG 현황 조사 및 개선 지원</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <span class="text-blue-400 mr-3 mt-2 text-xs">•</span>
+                                        <span class="text-white/90 text-sm leading-relaxed">공급망 리스크 모니터링 및 예방 대응</span>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                     
@@ -527,44 +617,44 @@
                 <div class="container mx-auto px-6">
                     <h2 class="heading-2 text-center mb-12 text-white font-bold tracking-wide">Our Services</h2>
                     <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-                        <div class="glass-dark p-8 rounded-xl transform hover:scale-105 transition-transform duration-300">
-                            <div class="flex items-center mb-4">
-                                <div class="card-icon blue mr-4">
+                        <div class="glass-dark p-8 rounded-xl transform hover:scale-105 transition-transform duration-300 text-center">
+                            <div class="flex items-center justify-center mb-6">
+                                <div class="card-icon blue mr-0">
                                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                                     </svg>
                                 </div>
-                                <h3 class="card-title blue font-bold"><span class="keep-together">ESG Compliance</span></h3>
                             </div>
-                            <p class="text-white/90 text-base leading-relaxed">고객사 <span class="keep-together">ESG 평가</span>, <span class="keep-together">온실가스 인벤토리</span>, 분쟁광물 관리 등 규제 대응</p>
+                            <h3 class="text-xl font-bold text-white mb-4 leading-tight"><span class="keep-together">ESG Compliance</span></h3>
+                            <p class="text-white/90 text-base leading-relaxed" style="word-break: keep-all;"><span class="keep-together">고객사 ESG 평가</span>, <span class="keep-together">온실가스 인벤토리</span>,<br><span class="keep-together">분쟁광물 관리</span> 등 <span class="keep-together">규제 대응</span></p>
                         </div>
-                        <div class="glass-dark p-8 rounded-xl transform hover:scale-105 transition-transform duration-300">
-                            <div class="flex items-center mb-4">
-                                <div class="card-icon green mr-4">
+                        <div class="glass-dark p-8 rounded-xl transform hover:scale-105 transition-transform duration-300 text-center">
+                            <div class="flex items-center justify-center mb-6">
+                                <div class="card-icon green mr-0">
                                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                                     </svg>
                                 </div>
-                                <h3 class="card-title green font-bold"><span class="keep-together">ESG Strategy</span></h3>
                             </div>
-                            <p class="text-white/90 text-base leading-relaxed"><span class="keep-together">탄소중립 로드맵</span>, <span class="keep-together">친환경 소재</span> 전환 등 <span class="keep-together">ESG 전략</span> 수립 및 실행</p>
+                            <h3 class="text-xl font-bold text-white mb-4 leading-tight"><span class="keep-together">ESG Strategy</span></h3>
+                            <p class="text-white/90 text-base leading-relaxed" style="word-break: keep-all;"><span class="keep-together">탄소중립 로드맵</span>, <span class="keep-together">친환경 소재</span> 전환 등<br><span class="keep-together">ESG 전략</span> 수립 및 실행</p>
                         </div>
-                        <div class="glass-dark p-8 rounded-xl transform hover:scale-105 transition-transform duration-300">
-                            <div class="flex items-center mb-4">
-                                <div class="card-icon gold mr-4">
+                        <div class="glass-dark p-8 rounded-xl transform hover:scale-105 transition-transform duration-300 text-center">
+                            <div class="flex items-center justify-center mb-6">
+                                <div class="card-icon gold mr-0">
                                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                                     </svg>
                                 </div>
-                                <h3 class="card-title gold font-bold"><span class="keep-together">ESG Reporting</span></h3>
                             </div>
-                            <p class="text-white/90 text-base leading-relaxed">제품 <span class="keep-together">LCA</span> 계산, <span class="keep-together">ESG 보고서</span> 작성, 성과 모니터링 등 데이터 관리</p>
+                            <h3 class="text-xl font-bold text-white mb-4 leading-tight"><span class="keep-together">ESG Reporting</span></h3>
+                            <p class="text-white/90 text-base leading-relaxed" style="word-break: keep-all;"><span class="keep-together">제품 LCA</span> 계산, <span class="keep-together">ESG 보고서</span> 작성,<br>성과 모니터링 등 <span class="keep-together">데이터 관리</span></p>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- 섬션 구분자 -->
+            <!-- 섹션 구분자 -->
             <div class="w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent mx-auto max-w-4xl"></div>
 
             <!-- 이렇게 함께합니다 -->
@@ -573,49 +663,49 @@
                     <div class="text-center">
                         <h2 class="heading-2 mb-12 text-white font-bold tracking-wide">이렇게 함께합니다</h2>
                         <div class="grid md:grid-cols-4 gap-6 max-w-6xl mx-auto">
-                            <div class="glass-dark p-8 rounded-xl transform hover:scale-105 transition-transform duration-300">
-                                <div class="flex items-center mb-4">
-                                    <div class="card-icon green mr-4">
+                            <div class="glass-dark p-8 rounded-xl transform hover:scale-105 transition-transform duration-300 text-center">
+                                <div class="flex items-center justify-center mb-6">
+                                    <div class="card-icon green mr-0">
                                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
                                         </svg>
                                     </div>
-                                    <h3 class="text-xl font-bold text-green-400">현황 파악</h3>
                                 </div>
-                                <p class="text-white/90 leading-relaxed">기업 현황과 <span class="keep-together">고객사 요구사항</span>을 정확히 분석합니다</p>
+                                <h3 class="text-xl font-bold text-green-400 mb-4 leading-tight">현황 파악</h3>
+                                <p class="text-white/90 leading-relaxed" style="word-break: keep-all;">기업 현황과<br><span class="keep-together">고객사 요구사항</span>을<br>정확히 분석합니다</p>
                             </div>
-                            <div class="glass-dark p-8 rounded-xl transform hover:scale-105 transition-transform duration-300">
-                                <div class="flex items-center mb-4">
-                                    <div class="card-icon green mr-4">
+                            <div class="glass-dark p-8 rounded-xl transform hover:scale-105 transition-transform duration-300 text-center">
+                                <div class="flex items-center justify-center mb-6">
+                                    <div class="card-icon green mr-0">
                                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                         </svg>
                                     </div>
-                                    <h3 class="text-xl font-bold text-green-400">맞춤 계획</h3>
                                 </div>
-                                <p class="text-white/90 leading-relaxed">기업 규모와 업종에 맞는 <span class="keep-together">ESG 대응</span> 계획을 수립합니다</p>
+                                <h3 class="text-xl font-bold text-green-400 mb-4 leading-tight">맞춤 계획</h3>
+                                <p class="text-white/90 leading-relaxed" style="word-break: keep-all;">기업 규모와 업종에 맞는<br><span class="keep-together">ESG 대응</span> 계획을<br>수립합니다</p>
                             </div>
-                            <div class="glass-dark p-8 rounded-xl transform hover:scale-105 transition-transform duration-300">
-                                <div class="flex items-center mb-4">
-                                    <div class="card-icon green mr-4">
+                            <div class="glass-dark p-8 rounded-xl transform hover:scale-105 transition-transform duration-300 text-center">
+                                <div class="flex items-center justify-center mb-6">
+                                    <div class="card-icon green mr-0">
                                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                                         </svg>
                                     </div>
-                                    <h3 class="text-xl font-bold text-green-400">전문 대행</h3>
                                 </div>
-                                <p class="text-white/90 leading-relaxed"><span class="keep-together">온실가스 관리</span>부터 보고서 작성까지 모든 업무를 처리합니다</p>
+                                <h3 class="text-xl font-bold text-green-400 mb-4 leading-tight">전문 대행</h3>
+                                <p class="text-white/90 leading-relaxed" style="word-break: keep-all;"><span class="keep-together">온실가스 관리</span>부터<br>보고서 작성까지<br>모든 업무를 처리합니다</p>
                             </div>
-                            <div class="glass-dark p-8 rounded-xl transform hover:scale-105 transition-transform duration-300">
-                                <div class="flex items-center mb-4">
-                                    <div class="card-icon green mr-4">
+                            <div class="glass-dark p-8 rounded-xl transform hover:scale-105 transition-transform duration-300 text-center">
+                                <div class="flex items-center justify-center mb-6">
+                                    <div class="card-icon green mr-0">
                                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                                         </svg>
                                     </div>
-                                    <h3 class="text-xl font-bold text-green-400">지속 관리</h3>
                                 </div>
-                                <p class="text-white/90 leading-relaxed">정기적인 업데이트와 <span class="keep-together">새로운 요구사항</span>에 대응합니다</p>
+                                <h3 class="text-xl font-bold text-green-400 mb-4 leading-tight">지속 관리</h3>
+                                <p class="text-white/90 leading-relaxed" style="word-break: keep-all;">정기적인 업데이트와<br><span class="keep-together">새로운 요구사항</span>에<br>대응합니다</p>
                             </div>
                         </div>
                     </div>
@@ -685,26 +775,36 @@
         </section>
     </main>
 
-    <!-- Footer -->
-    <div class="relative py-12 rounded-none">
-        <div class="absolute inset-0 bg-brand-blue/95 rounded-none pointer-events-none"></div>
-        <div class="container mx-auto px-6 relative text-white">
+    <!-- 미니멀 고급 푸터 -->
+    <footer class="bg-brand-blue" style="padding-top: 1.75rem; padding-bottom: 1.75rem;">
+        <div class="container mx-auto px-6">
             <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-                <div class="flex items-center gap-8">
-                    <span class="text-xl font-bold text-white">sustainX</span>
-                    <span class="text-white/60">|</span>
-                    <span class="text-white/90">The Supply Chain ESG Partner</span>
+                <!-- 브랜드 정보 -->
+                <div class="text-center md:text-left">
+                    <h3 class="text-lg font-bold text-white">
+                        <span class="bg-gradient-to-r from-brand-gold to-brand-green bg-clip-text text-transparent">sustainX</span>
+                        <span class="text-white/50 text-sm mx-6">|</span>
+                        <span class="text-white/70 text-sm font-light">서스테인엑스(주)</span>
+                    </h3>
                 </div>
-                <div class="flex items-center gap-8 text-sm">
-                    <span class="text-white/90">contact@sustainx.co.kr</span>
-                    <span class="text-white/60">|</span>
-                    <span class="text-white/80">충청남도 천안시 서북구</span>
-                    <span class="text-white/60">|</span>
-                    <span class="text-white/70 cursor-pointer" id="admin-link">&copy; 2025 sustainX Corp.</span>
+                
+                <!-- 태그라인 (중앙) -->
+                <div class="text-center">
+                    <p class="text-sm text-brand-gold font-medium tracking-wide">The Supply Chain ESG Partner</p>
+                </div>
+                
+                <!-- 저작권 -->
+                <div class="text-center md:text-right">
+                    <div class="flex items-center gap-2 text-white/60 text-sm">
+                        <span>&copy; 2025 sustainX Corp.</span>
+                        <span class="cursor-pointer hover:text-brand-gold transition-colors" id="admin-link">
+                            All rights reserved
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </footer>
 
     <!-- 관리자 로그인 모달 -->
     <div id="admin-login-modal" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop hidden z-50 flex items-center justify-center p-4">
@@ -759,91 +859,103 @@
         </div>
     </div>
 
-    <!-- 문의 접수 모달 -->
+    <!-- 문의 접수 모달 - 개선된 버전 -->
     <div id="inquiry-modal" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white modal-container max-w-lg w-full max-h-[90vh] shadow-2xl rounded-2xl">
-            <div class="modal-scrollbar max-h-[90vh] overflow-y-auto">
-                <div class="p-8">
-                    <div class="flex justify-between items-center mb-6">
+        <div class="modal-container w-full max-w-lg mx-auto">
+            <!-- 모달 헤더 (고정) -->
+            <div class="bg-white rounded-t-2xl shadow-2xl border-b border-gray-100">
+                <div class="px-8 py-6">
+                    <div class="flex justify-between items-center">
                         <h3 class="text-2xl font-bold text-brand-blue">무료 상담 신청</h3>
-                        <button id="close-modal" class="text-gray-400 hover:text-gray-600 text-2xl transition-colors duration-200 hover:scale-110">&times;</button>
+                        <button id="close-modal" class="text-gray-400 hover:text-gray-600 text-2xl transition-colors duration-200 hover:scale-110 flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-100">
+                            &times;
+                        </button>
                     </div>
-                
-                <form id="inquiry-form" class="space-y-5">
-                    <!-- 기본 정보 그룹 -->
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="company" class="block text-sm font-semibold text-gray-800 mb-2">회사명 *</label>
-                            <input type="text" id="company" name="company" required class="form-input w-full px-4 py-3 rounded-lg text-sm border-2 border-gray-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20">
+                </div>
+            </div>
+            
+            <!-- 모달 바디 (스크롤 가능) -->
+            <div class="bg-white max-h-[70vh] overflow-y-auto custom-scrollbar">
+                <div class="px-8 py-6">
+                    <form id="inquiry-form" class="space-y-5">
+                        <!-- 기본 정보 그룹 -->
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="company" class="block text-sm font-semibold text-gray-800 mb-2">회사명 *</label>
+                                <input type="text" id="company" name="company" required class="form-input w-full px-4 py-3 rounded-lg text-sm border-2 border-gray-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 transition-all">
+                            </div>
+                            <div>
+                                <label for="name" class="block text-sm font-semibold text-gray-800 mb-2">담당자명 *</label>
+                                <input type="text" id="name" name="name" required class="form-input w-full px-4 py-3 rounded-lg text-sm border-2 border-gray-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 transition-all">
+                            </div>
                         </div>
-                        <div>
-                            <label for="name" class="block text-sm font-semibold text-gray-800 mb-2">담당자명 *</label>
-                            <input type="text" id="name" name="name" required class="form-input w-full px-4 py-3 rounded-lg text-sm border-2 border-gray-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20">
+                        
+                        <!-- 연락처 정보 그룹 -->
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="email" class="block text-sm font-semibold text-gray-800 mb-2">이메일 *</label>
+                                <input type="email" id="email" name="email" required class="form-input w-full px-4 py-3 rounded-lg text-sm border-2 border-gray-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 transition-all">
+                            </div>
+                            <div>
+                                <label for="phone" class="block text-sm font-semibold text-gray-800 mb-2">연락처</label>
+                                <input type="tel" id="phone" name="phone" class="form-input w-full px-4 py-3 rounded-lg text-sm border-2 border-gray-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 transition-all">
+                            </div>
                         </div>
-                    </div>
-                    
-                    <!-- 연락처 정보 그룹 -->
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="email" class="block text-sm font-semibold text-gray-800 mb-2">이메일 *</label>
-                            <input type="email" id="email" name="email" required class="form-input w-full px-4 py-3 rounded-lg text-sm border-2 border-gray-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20">
+                        
+                        <!-- 직책 및 회사 정보 그룹 -->
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="position" class="block text-sm font-semibold text-gray-800 mb-2">직책</label>
+                                <input type="text" id="position" name="position" placeholder="예: 대리, 과장, 팀장 등" class="form-input w-full px-4 py-3 rounded-lg text-sm border-2 border-gray-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 transition-all">
+                            </div>
+                            <div>
+                                <label for="industry" class="block text-sm font-semibold text-gray-800 mb-2">업종</label>
+                                <select id="industry" name="industry" class="form-input w-full px-4 py-3 rounded-lg text-sm border-2 border-gray-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 transition-all">
+                                    <option value="">선택해주세요</option>
+                                    <option value="automotive">자동차/부품</option>
+                                    <option value="electronics">전자/전기</option>
+                                    <option value="manufacturing">제조업</option>
+                                    <option value="chemical">화학/소재</option>
+                                    <option value="other">기타</option>
+                                </select>
+                            </div>
                         </div>
+                        
+                        <!-- ESG 고민사항 -->
                         <div>
-                            <label for="phone" class="block text-sm font-semibold text-gray-800 mb-2">연락처</label>
-                            <input type="tel" id="phone" name="phone" class="form-input w-full px-4 py-3 rounded-lg text-sm border-2 border-gray-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20">
+                            <label for="concern" class="block text-sm font-semibold text-gray-800 mb-2">주요 ESG 고민사항 *</label>
+                            <textarea id="concern" name="concern" required rows="4" class="form-input w-full px-4 py-3 rounded-lg resize-none text-sm border-2 border-gray-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 transition-all" placeholder="예: 고객사 ESG 평가 대응, 온실가스 인벤토리 구축, 책임광물 관리 등"></textarea>
                         </div>
-                    </div>
-                    
-                    <!-- 직책 및 회사 정보 그룹 -->
-                    <div class="grid md:grid-cols-2 gap-4">
+                        
+                        <!-- 희망 상담 시기 -->
                         <div>
-                            <label for="position" class="block text-sm font-semibold text-gray-800 mb-2">직책</label>
-                            <input type="text" id="position" name="position" placeholder="예: 대리, 과장, 팀장 등" class="form-input w-full px-4 py-3 rounded-lg text-sm border-2 border-gray-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20">
-                        </div>
-                        <div>
-                            <label for="industry" class="block text-sm font-semibold text-gray-800 mb-2">업종</label>
-                            <select id="industry" name="industry" class="form-input w-full px-4 py-3 rounded-lg text-sm border-2 border-gray-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20">
+                            <label for="consultation-time" class="block text-sm font-semibold text-gray-800 mb-2">희망 상담 시기</label>
+                            <select id="consultation-time" name="consultationTime" class="form-input w-full px-4 py-3 rounded-lg text-sm border-2 border-gray-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 transition-all">
                                 <option value="">선택해주세요</option>
-                                <option value="automotive">자동차/부품</option>
-                                <option value="electronics">전자/전기</option>
-                                <option value="manufacturing">제조업</option>
-                                <option value="chemical">화학/소재</option>
-                                <option value="other">기타</option>
+                                <option value="immediately">최대한 빠른 시일 내</option>
+                                <option value="next-week">다음 주 내</option>
+                                <option value="this-month">이번 달 내</option>
+                                <option value="flexible">유연하게 조정 가능</option>
                             </select>
                         </div>
-                    </div>
-                    
-                    <!-- ESG 고민사항 -->
-                    <div>
-                        <label for="concern" class="block text-sm font-semibold text-gray-800 mb-2">주요 ESG 고민사항 *</label>
-                        <textarea id="concern" name="concern" required rows="4" class="form-input w-full px-4 py-3 rounded-lg resize-none text-sm border-2 border-gray-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20" placeholder="예: 고객사 ESG 평가 대응, 온실가스 인벤토리 구축, 책임광물 관리 등"></textarea>
-                    </div>
-                    
-                    <!-- 희망 상담 시기 (간소화) -->
-                    <div>
-                        <label for="consultation-time" class="block text-sm font-semibold text-gray-800 mb-2">희망 상담 시기</label>
-                        <select id="consultation-time" name="consultationTime" class="form-input w-full px-4 py-3 rounded-lg text-sm border-2 border-gray-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20">
-                            <option value="">선택해주세요</option>
-                            <option value="immediately">최대한 빠른 시일 내</option>
-                            <option value="next-week">다음 주 내</option>
-                            <option value="this-month">이번 달 내</option>
-                            <option value="flexible">유연하게 조정 가능</option>
-                        </select>
-                    </div>
-                    
-                    <!-- 개인정보 동의 -->
-                    <div class="flex items-start pt-4">
-                        <input type="checkbox" id="privacy" name="privacy" required class="mt-1 mr-3 w-4 h-4 text-brand-blue focus:ring-brand-blue border-gray-300 rounded">
-                        <label for="privacy" class="text-sm text-gray-700 leading-normal">
-                            개인정보 수집 및 이용에 동의합니다. (수집된 정보는 상담 목적으로만 사용됩니다)
-                        </label>
-                    </div>
-                    
-                    <!-- 제출 버튼 -->
-                    <button type="submit" class="w-full bg-brand-blue text-white py-4 px-8 rounded-lg hover:bg-brand-green transition-all duration-300 font-semibold text-lg transform hover:scale-[1.02] hover:shadow-lg">
+                        
+                        <!-- 개인정보 동의 -->
+                        <div class="flex items-start pt-4">
+                            <input type="checkbox" id="privacy" name="privacy" required class="mt-1 mr-3 w-4 h-4 text-brand-blue focus:ring-brand-blue border-gray-300 rounded flex-shrink-0">
+                            <label for="privacy" class="text-sm text-gray-700 leading-normal">
+                                개인정보 수집 및 이용에 동의합니다. (수집된 정보는 상담 목적으로만 사용됩니다)
+                            </label>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- 모달 푸터 (고정) -->
+            <div class="bg-white rounded-b-2xl shadow-2xl border-t border-gray-100">
+                <div class="px-8 py-6">
+                    <button type="submit" form="inquiry-form" class="w-full bg-brand-blue text-white py-4 px-8 rounded-lg hover:bg-brand-green transition-all duration-300 font-semibold text-lg transform hover:scale-[1.02] hover:shadow-lg">
                         상담 신청하기
                     </button>
-                </form>
                 </div>
             </div>
         </div>

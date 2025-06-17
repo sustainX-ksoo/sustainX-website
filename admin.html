@@ -31,8 +31,38 @@
             }
         }
     </script>
+    <style>
+        /* 배경 이미지 fallback CSS */
+        .admin-bg {
+            background-image: url('images/admin/admin-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        
+        /* 배경 이미지 로드 실패시 기본 배경 */
+        .admin-bg.bg-fallback {
+            background: linear-gradient(135deg, #0A1628 0%, #1B4D3E 50%, #2C3E50 100%);
+        }
+        
+        /* 배경 이미지 로드 성공 시 애니메이션 */
+        .admin-bg.bg-loaded {
+            animation: fadeInBackground 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeInBackground {
+            from { opacity: 0.8; }
+            to { opacity: 1; }
+        }
+        
+        /* 로딩 상태 스타일 */
+        .admin-bg:not(.bg-loaded):not(.bg-fallback) {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
 </head>
-<body class="bg-cover bg-center bg-fixed bg-no-repeat min-h-screen relative" style="background-image: url('images/admin/admin-bg.jpeg');">
+<body class="bg-cover bg-center bg-fixed bg-no-repeat min-h-screen relative admin-bg" style="background-image: url('images/admin/admin-bg.jpg');">
     <!-- 배경 오버레이 -->
     <div class="fixed inset-0 bg-white/40 backdrop-blur-[1px] z-0"></div>
     
@@ -926,6 +956,36 @@
         
         console.log('디버깅 함수가 sustainXAdmin 객체로 등록되었습니다.');
         console.log('사용법: sustainXAdmin.checkAuth(), sustainXAdmin.clearSession() 등');
+        
+        // 배경 이미지 로드 체크 및 디버깅
+        function checkBackgroundImage() {
+            const body = document.body;
+            const computedStyle = window.getComputedStyle(body);
+            const backgroundImage = computedStyle.backgroundImage;
+            
+            console.log('=== 배경 이미지 체크 ===');
+            console.log('배경 이미지 CSS:', backgroundImage);
+            
+            // 이미지 로드 테스트
+            const testImage = new Image();
+            testImage.onload = () => {
+                console.log('✅ 배경 이미지 로드 성공');
+                body.classList.add('bg-loaded');
+            };
+            testImage.onerror = () => {
+                console.error('❌ 배경 이미지 로드 실패');
+                console.log('기본 그라데이션 배경 사용');
+                body.style.backgroundImage = 'none';
+                body.classList.add('bg-fallback');
+            };
+            testImage.src = 'images/admin/admin-bg.jpg';
+        }
+        
+        // sustainXAdmin에 배경 체크 함수 추가
+        window.sustainXAdmin.checkBackground = checkBackgroundImage;
+        
+        // 페이지 로드 후 배경 이미지 체크
+        setTimeout(checkBackgroundImage, 1000);
         
         // 페이지 로드 시 바로 인증 상태 체크
         console.log('=== admin.html 페이지 로드 완료 ===');
