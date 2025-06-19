@@ -222,59 +222,49 @@
         let currentInquiries = [];
         let currentInquiryId = null;
         
-        // Firebase Auth 상태 체크 (최대한 간단한 버전)
+        // 간단하고 확실한 인증 체크 (디버깅 결과 반영)
         function checkAdminAuth() {
             return new Promise((resolve) => {
                 console.log('=== 관리자 인증 체크 시작 ===');
                 
-                // Firebase Auth가 준비될 때까지 기다리기
-                const waitForAuth = () => {
-                    if (!auth) {
-                        console.log('Firebase Auth 아직 로드 중...');
-                        setTimeout(waitForAuth, 100);
-                        return;
-                    }
-                    
-                    console.log('Firebase Auth 로드 완료');
-                    
-                    // 현재 사용자 확인
-                    const currentUser = auth.currentUser;
-                    console.log('현재 사용자:', currentUser);
-                    
-                    if (currentUser) {
-                        console.log('✅ 인증된 관리자:', currentUser.email);
-                        resolve(true);
-                        return;
-                    }
-                    
-                    // Auth 상태 변화 대기
-                    console.log('인증 상태 변화 대기 중...');
-                    const unsubscribe = auth.onAuthStateChanged((user) => {
-                        console.log('🔄 Auth 상태 변화:', user ? user.email : '로그아웃 상태');
-                        
-                        unsubscribe(); // 리스너 즉시 제거
-                        
-                        if (user) {
-                            console.log('✅ 인증 성공:', user.email);
-                            // 세션 저장
-                            sessionStorage.setItem('sustainx_admin_logged_in', 'true');
-                            sessionStorage.setItem('sustainx_admin_email', user.email);
-                            resolve(true);
-                        } else {
-                            console.log('❌ 인증 실패');
-                            resolve(false);
-                        }
-                    });
-                    
-                    // 3초 후 타임아웃
-                    setTimeout(() => {
-                        console.log('⏰ 인증 체크 타임아웃');
-                        unsubscribe();
-                        resolve(false);
-                    }, 3000);
-                };
+                // 즉시 현재 사용자 확인
+                if (auth && auth.currentUser) {
+                    console.log('✅ 인증된 사용자 발견:', auth.currentUser.email);
+                    resolve(true);
+                    return;
+                }
                 
-                waitForAuth();
+                // 세션 스토리지 확인
+                const sessionAuth = sessionStorage.getItem('sustainx_admin_logged_in');
+                const sessionEmail = sessionStorage.getItem('sustainx_admin_email');
+                
+                if (sessionAuth === 'true' && sessionEmail) {
+                    console.log('✅ 유효한 세션 발견:', sessionEmail);
+                    resolve(true);
+                    return;
+                }
+                
+                // Auth 상태 변화 리스너 (1회만)
+                console.log('Auth 상태 변화 대기...');
+                const unsubscribe = auth.onAuthStateChanged((user) => {
+                    console.log('Auth 상태 변화:', user ? user.email : '로그아웃');
+                    unsubscribe();
+                    
+                    if (user) {
+                        console.log('✅ 인증 성공:', user.email);
+                        resolve(true);
+                    } else {
+                        console.log('❌ 인증 실패');
+                        resolve(false);
+                    }
+                });
+                
+                // 2초 후 타임아웃
+                setTimeout(() => {
+                    console.log('⏰ 타임아웃 - 인증 실패');
+                    unsubscribe();
+                    resolve(false);
+                }, 2000);
             });
         }
         
