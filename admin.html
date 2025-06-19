@@ -240,60 +240,59 @@
         let currentInquiries = [];
         let currentInquiryId = null;
         
-        // Firebase Auth 상태 체크 (간소화된 버전)
+        // Firebase Auth 상태 체크 (최대한 간단한 버전)
         function checkAdminAuth() {
             return new Promise((resolve) => {
                 console.log('=== 관리자 인증 체크 시작 ===');
                 
-                // 현재 Firebase Auth 사용자 확인
-                const currentUser = auth.currentUser;
-                console.log('현재 Firebase Auth 사용자:', currentUser);
-                
-                if (currentUser) {
-                    console.log('이미 인증된 관리자:', currentUser.email);
-                    // 세션 정보 업데이트
-                    sessionStorage.setItem('sustainx_admin_logged_in', 'true');
-                    sessionStorage.setItem('sustainx_admin_email', currentUser.email);
-                    sessionStorage.setItem('sustainx_admin_login_time', Date.now().toString());
-                    resolve(true);
-                    return;
-                }
-                
-                // Firebase Auth 상태 변화 리스너 (단순화)
-                console.log('Firebase Auth 상태 변화 리스너 설정');
-                
-                const unsubscribe = auth.onAuthStateChanged((user) => {
-                    console.log('Auth 상태 변화 이벤트:', user ? user.email : 'null');
-                    
-                    if (user) {
-                        console.log('인증된 관리자:', user.email);
-                        // 세션 정보 업데이트
-                        sessionStorage.setItem('sustainx_admin_logged_in', 'true');
-                        sessionStorage.setItem('sustainx_admin_email', user.email);
-                        sessionStorage.setItem('sustainx_admin_login_time', Date.now().toString());
-                        
-                        unsubscribe();
-                        resolve(true);
-                    } else {
-                        console.log('로그인되지 않은 상태');
-                        // 세션 정보 삭제
-                        sessionStorage.removeItem('sustainx_admin_logged_in');
-                        sessionStorage.removeItem('sustainx_admin_email');
-                        sessionStorage.removeItem('sustainx_admin_login_time');
-                        
-                        unsubscribe();
-                        redirectToHome();
-                        resolve(false);
+                // Firebase Auth가 준비될 때까지 기다리기
+                const waitForAuth = () => {
+                    if (!auth) {
+                        console.log('Firebase Auth 아직 로드 중...');
+                        setTimeout(waitForAuth, 100);
+                        return;
                     }
-                });
+                    
+                    console.log('Firebase Auth 로드 완료');
+                    
+                    // 현재 사용자 확인
+                    const currentUser = auth.currentUser;
+                    console.log('현재 사용자:', currentUser);
+                    
+                    if (currentUser) {
+                        console.log('✅ 인증된 관리자:', currentUser.email);
+                        resolve(true);
+                        return;
+                    }
+                    
+                    // Auth 상태 변화 대기
+                    console.log('인증 상태 변화 대기 중...');
+                    const unsubscribe = auth.onAuthStateChanged((user) => {
+                        console.log('🔄 Auth 상태 변화:', user ? user.email : '로그아웃 상태');
+                        
+                        unsubscribe(); // 리스너 즉시 제거
+                        
+                        if (user) {
+                            console.log('✅ 인증 성공:', user.email);
+                            // 세션 저장
+                            sessionStorage.setItem('sustainx_admin_logged_in', 'true');
+                            sessionStorage.setItem('sustainx_admin_email', user.email);
+                            resolve(true);
+                        } else {
+                            console.log('❌ 인증 실패');
+                            resolve(false);
+                        }
+                    });
+                    
+                    // 3초 후 타임아웃
+                    setTimeout(() => {
+                        console.log('⏰ 인증 체크 타임아웃');
+                        unsubscribe();
+                        resolve(false);
+                    }, 3000);
+                };
                 
-                // 5초 후 타임아웃 처리 (더 짧게)
-                setTimeout(() => {
-                    console.log('인증 체크 타임아웃 - 홈페이지로 리다이렉트');
-                    unsubscribe();
-                    redirectToHome();
-                    resolve(false);
-                }, 5000);
+                waitForAuth();
             });
         }
         
@@ -333,62 +332,48 @@
             }
         }
 
-        // 초기화 (Firebase Auth 기반) - 개선된 버전
+        // 초기화 (더 간단하고 확실하게)
         document.addEventListener('DOMContentLoaded', async () => {
+            console.log('🚀 관리자 페이지 초기화 시작');
+            
             try {
-                console.log('DOMContentLoaded: 관리자 페이지 초기화 시작');
-                
-                // Firebase 초기화 대기 (더 짧은 타임아웃)
-                if (!window.auth || !window.db) {
-                    console.log('Firebase 초기화 대기 중...');
-                    await new Promise((resolve, reject) => {
-                        let attempts = 0;
-                        const maxAttempts = 50; // 5초 대기
-                        
-                        const checkFirebase = () => {
-                            attempts++;
-                            if (window.auth && window.db) {
-                                console.log('Firebase 초기화 완료 확인');
-                                resolve();
-                            } else if (attempts >= maxAttempts) {
-                                reject(new Error('Firebase 초기화 타임아웃'));
-                            } else {
-                                setTimeout(checkFirebase, 100);
-                            }
-                        };
-                        checkFirebase();
-                    });
+                // Firebase가 로드될 때까지 기다리기 (10초 대기)
+                let attempts = 0;
+                while ((!window.auth || !window.db) && attempts < 100) {
+                    console.log(`Firebase 로딩 대기 중... (${attempts + 1}/100)`);
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    attempts++;
                 }
                 
-                // 전역 변수 설정 확인
-                if (!window.auth) {
-                    console.error('Firebase Auth가 초기화되지 않음');
-                    alert('Firebase 초기화 오류. 페이지를 새로고침해주세요.');
+                if (!window.auth || !window.db) {
+                    throw new Error('Firebase 초기화 실패');
+                }
+                
+                console.log('✅ Firebase 초기화 완료');
+                
+                // 인증 체크
+                console.log('🔐 인증 체크 시작');
+                const isAuthenticated = await checkAdminAuth();
+                
+                console.log('📊 인증 결과:', isAuthenticated);
+                
+                if (!isAuthenticated) {
+                    console.log('❌ 인증 실패 - 리다이렉트');
+                    redirectToHome();
                     return;
                 }
                 
-                console.log('Firebase Auth 상태 체크 시작');
+                console.log('✅ 인증 성공 - 데이터 로드');
                 
-                // Firebase Auth 상태 체크
-                const isAuthenticated = await checkAdminAuth();
-                console.log('인증 결과:', isAuthenticated);
-                
-                if (!isAuthenticated) {
-                    console.log('인증 실패 - 홈페이지로 리다이렉트');
-                    return; // 인증 실패 시 여기서 중단
-                }
-                
-                console.log('인증 성공 - 데이터 로드 및 이벤트 바인딩 시작');
-                
-                // 인증 성공 시 데이터 로드 및 이벤트 바인딩
+                // 데이터 로드 및 이벤트 바인딩
                 await loadInquiries();
                 bindEvents();
                 
-                console.log('Firebase Auth 기반 관리자 페이지 초기화 완료');
+                console.log('🎉 초기화 완료!');
                 
             } catch (error) {
-                console.error('초기화 오류:', error);
-                alert(`초기화 오류가 발생했습니다: ${error.message}`);
+                console.error('❌ 초기화 오류:', error);
+                alert(`초기화 오류: ${error.message}`);
                 redirectToHome();
             }
         });
@@ -905,38 +890,55 @@
         
         // 디버깅용 함수 - 브라우저 콘솔에서 사용 가능
         window.sustainXAdmin = {
+            // 인증 상태 확인
             checkAuth: () => {
-                console.log('=== 디버깅: 인증 상태 체크 ===');
-                console.log('Firebase Auth currentUser:', auth?.currentUser);
+                console.log('=== 🔍 인증 상태 디버깅 ===');
+                console.log('Firebase Auth:', {
+                    available: !!auth,
+                    currentUser: auth?.currentUser,
+                    email: auth?.currentUser?.email
+                });
                 console.log('세션 스토리지:', {
                     logged_in: sessionStorage.getItem('sustainx_admin_logged_in'),
-                    email: sessionStorage.getItem('sustainx_admin_email'),
-                    login_time: sessionStorage.getItem('sustainx_admin_login_time')
+                    email: sessionStorage.getItem('sustainx_admin_email')
                 });
                 return { firebase: auth?.currentUser, session: sessionStorage.getItem('sustainx_admin_logged_in') };
             },
-            clearSession: () => {
-                console.log('세션 스토리지 강제 정리');
-                sessionStorage.removeItem('sustainx_admin_logged_in');
-                sessionStorage.removeItem('sustainx_admin_email');
-                sessionStorage.removeItem('sustainx_admin_login_time');
-            },
-            forceLogin: () => {
-                console.log('강제 로그인 설정 (테스트용)');
+            
+            // 강제 로그인 (테스트용)
+            forceAuth: () => {
+                console.log('🔓 강제 인증 설정 (테스트용)');
                 sessionStorage.setItem('sustainx_admin_logged_in', 'true');
                 sessionStorage.setItem('sustainx_admin_email', 'test@admin.com');
-                sessionStorage.setItem('sustainx_admin_login_time', Date.now().toString());
+                console.log('세션 설정 완료. 페이지를 새로고침하세요.');
             },
-            getCurrentUser: () => {
-                return auth?.currentUser;
+            
+            // 인증 초기화
+            clearAuth: () => {
+                console.log('🗑️ 인증 정보 초기화');
+                sessionStorage.removeItem('sustainx_admin_logged_in');
+                sessionStorage.removeItem('sustainx_admin_email');
+                if (auth?.currentUser) {
+                    auth.signOut();
+                }
             },
+            
+            // 수동 인증 체크
+            testAuth: async () => {
+                console.log('🧪 수동 인증 테스트 시작');
+                const result = await checkAdminAuth();
+                console.log('테스트 결과:', result);
+                return result;
+            },
+            
+            // 페이지 리로드
             reload: () => {
                 window.location.reload();
             }
         };
         
-        console.log('디버깅 함수가 sustainXAdmin 객체로 등록되었습니다.');
-        console.log('사용법: sustainXAdmin.checkAuth(), sustainXAdmin.clearSession() 등');
+        console.log('🛠️ 디버깅 도구가 sustainXAdmin 객체로 등록되었습니다.');
+        console.log('사용법: sustainXAdmin.checkAuth(), sustainXAdmin.testAuth() 등');
         
         // 배경 이미지 로드 체크 및 디버깅
         function checkBackgroundImage() {
