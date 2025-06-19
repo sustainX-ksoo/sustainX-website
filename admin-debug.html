@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sustainX - 관리자 디버깅 페이지</title>
+    <link rel="stylesheet" href="./dist/output.css">
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="firebase-config.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-8 text-blue-600">🔧 sustainX 관리자 디버깅 페이지</h1>
+        
+        <!-- 상태 표시 -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h2 class="text-xl font-semibold mb-4">🔍 현재 상태</h2>
+            <div id="status" class="space-y-2 text-sm font-mono"></div>
+        </div>
+        
+        <!-- 테스트 버튼들 -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h2 class="text-xl font-semibold mb-4">🧪 테스트 도구</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <button onclick="checkStatus()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                    상태 확인
+                </button>
+                <button onclick="checkFirebase()" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                    Firebase 확인
+                </button>
+                <button onclick="checkAuth()" class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600">
+                    인증 확인
+                </button>
+                <button onclick="goToAdmin()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                    관리자 페이지로
+                </button>
+            </div>
+        </div>
+        
+        <!-- 로그 -->
+        <div class="bg-gray-900 text-green-400 p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4 text-white">📝 로그</h2>
+            <div id="log" class="text-sm font-mono h-96 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <script>
+        // 로그 함수
+        function log(message, type = 'info') {
+            const logEl = document.getElementById('log');
+            const time = new Date().toLocaleTimeString();
+            const colors = {
+                info: 'text-green-400',
+                error: 'text-red-400',
+                warn: 'text-yellow-400',
+                success: 'text-blue-400'
+            };
+            logEl.innerHTML += `<div class="${colors[type]}">[${time}] ${message}</div>`;
+            logEl.scrollTop = logEl.scrollHeight;
+            console.log(message);
+        }
+
+        // 상태 업데이트 함수
+        function updateStatus() {
+            const statusEl = document.getElementById('status');
+            statusEl.innerHTML = `
+                <div><strong>현재 URL:</strong> ${window.location.href}</div>
+                <div><strong>이전 페이지:</strong> ${document.referrer}</div>
+                <div><strong>Firebase Auth:</strong> ${window.auth ? '✅ 로드됨' : '❌ 로드 안됨'}</div>
+                <div><strong>Firebase DB:</strong> ${window.db ? '✅ 로드됨' : '❌ 로드 안됨'}</div>
+                <div><strong>Current User:</strong> ${window.auth?.currentUser?.email || '❌ 없음'}</div>
+                <div><strong>세션 로그인:</strong> ${sessionStorage.getItem('sustainx_admin_logged_in') || '❌ 없음'}</div>
+                <div><strong>세션 이메일:</strong> ${sessionStorage.getItem('sustainx_admin_email') || '❌ 없음'}</div>
+            `;
+        }
+
+        // 테스트 함수들
+        function checkStatus() {
+            log('상태 확인 중...', 'info');
+            updateStatus();
+            log('상태 확인 완료', 'success');
+        }
+
+        function checkFirebase() {
+            log('Firebase 상태 확인 중...', 'info');
+            
+            if (!window.auth) {
+                log('❌ Firebase Auth가 로드되지 않음', 'error');
+                return;
+            }
+            
+            if (!window.db) {
+                log('❌ Firebase Firestore가 로드되지 않음', 'error');
+                return;
+            }
+            
+            log('✅ Firebase 모든 서비스 정상 로드됨', 'success');
+            
+            // 현재 사용자 확인
+            if (auth.currentUser) {
+                log(`✅ 현재 로그인된 사용자: ${auth.currentUser.email}`, 'success');
+            } else {
+                log('❌ 로그인된 사용자 없음', 'warn');
+            }
+        }
+
+        async function checkAuth() {
+            log('인증 상태 확인 중...', 'info');
+            
+            return new Promise((resolve) => {
+                if (!auth) {
+                    log('❌ Firebase Auth가 없음', 'error');
+                    resolve(false);
+                    return;
+                }
+
+                // 현재 사용자 즉시 확인
+                if (auth.currentUser) {
+                    log(`✅ 이미 인증된 사용자: ${auth.currentUser.email}`, 'success');
+                    resolve(true);
+                    return;
+                }
+
+                log('Auth 상태 변화 리스너 등록...', 'info');
+                
+                // Auth 상태 변화 리스너
+                const unsubscribe = auth.onAuthStateChanged((user) => {
+                    if (user) {
+                        log(`✅ 인증 성공: ${user.email}`, 'success');
+                        resolve(true);
+                    } else {
+                        log('❌ 인증되지 않음', 'error');
+                        resolve(false);
+                    }
+                    unsubscribe();
+                });
+
+                // 3초 타임아웃
+                setTimeout(() => {
+                    log('⏰ 인증 체크 타임아웃', 'warn');
+                    unsubscribe();
+                    resolve(false);
+                }, 3000);
+            });
+        }
+
+        function goToAdmin() {
+            log('관리자 페이지로 이동...', 'info');
+            window.location.href = 'admin.html';
+        }
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            log('🚀 디버깅 페이지 로드됨', 'success');
+            
+            // Firebase 로드 대기
+            let attempts = 0;
+            const waitForFirebase = () => {
+                attempts++;
+                if (window.auth && window.db) {
+                    log('✅ Firebase 초기화 완료', 'success');
+                    updateStatus();
+                    
+                    // 자동으로 인증 체크
+                    setTimeout(() => {
+                        log('자동 인증 체크 시작...', 'info');
+                        checkAuth();
+                    }, 1000);
+                } else if (attempts < 50) {
+                    setTimeout(waitForFirebase, 100);
+                } else {
+                    log('❌ Firebase 초기화 타임아웃', 'error');
+                    updateStatus();
+                }
+            };
+            
+            waitForFirebase();
+        });
+
+        // 5초마다 상태 업데이트
+        setInterval(updateStatus, 5000);
+    </script>
+</body>
+</html>

@@ -3,6 +3,7 @@ module.exports = {
   content: [
     "./index.html",
     "./admin.html",
+    "./admin-debug.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
