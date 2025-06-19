@@ -9,16 +9,22 @@
     "build": "tailwindcss -i ./src/input.css -o ./dist/output.css --minify",
     "dev": "concurrently \"npm run build-css\" \"npm run serve\""
   },
-  "keywords": ["ESG", "sustainability", "supply-chain"],
+  "keywords": [
+    "ESG",
+    "sustainability",
+    "supply-chain"
+  ],
   "author": "sustainX",
   "license": "MIT",
   "devDependencies": {
-    "tailwindcss": "^3.4.0",
     "@tailwindcss/forms": "^0.5.7",
     "autoprefixer": "^10.4.16",
-    "postcss": "^8.4.32",
     "concurrently": "^8.2.2",
-    "http-server": "^14.1.1"
+    "http-server": "^14.1.1",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.4.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "dotenv": "^16.5.0"
+  }
 }
