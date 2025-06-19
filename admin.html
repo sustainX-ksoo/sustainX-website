@@ -240,35 +240,12 @@
         let currentInquiries = [];
         let currentInquiryId = null;
         
-        // Firebase Auth 상태 체크 (최종 개선된 버전)
+        // Firebase Auth 상태 체크 (간소화된 버전)
         function checkAdminAuth() {
             return new Promise((resolve) => {
                 console.log('=== 관리자 인증 체크 시작 ===');
                 
-                // 1. 세션 스토리지 체크
-                const sessionAuth = sessionStorage.getItem('sustainx_admin_logged_in');
-                const sessionEmail = sessionStorage.getItem('sustainx_admin_email');
-                const sessionTime = sessionStorage.getItem('sustainx_admin_login_time');
-                
-                console.log('세션 정보:', { sessionAuth, sessionEmail, sessionTime });
-                
-                // 세션이 24시간 이내인지 확인
-                if (sessionAuth === 'true' && sessionTime) {
-                    const loginTime = parseInt(sessionTime);
-                    const now = Date.now();
-                    const hoursPassed = (now - loginTime) / (1000 * 60 * 60);
-                    
-                    if (hoursPassed < 24) {
-                        console.log('유효한 세션 인증 상태 (경과 시간:', hoursPassed.toFixed(2), '시간)');
-                    } else {
-                        console.log('만료된 세션 - 세션 정리');
-                        sessionStorage.removeItem('sustainx_admin_logged_in');
-                        sessionStorage.removeItem('sustainx_admin_email');
-                        sessionStorage.removeItem('sustainx_admin_login_time');
-                    }
-                }
-                
-                // 2. 현재 Firebase Auth 사용자 즉시 확인
+                // 현재 Firebase Auth 사용자 확인
                 const currentUser = auth.currentUser;
                 console.log('현재 Firebase Auth 사용자:', currentUser);
                 
@@ -282,13 +259,10 @@
                     return;
                 }
                 
-                // 3. Firebase Auth 상태 변화 리스너
+                // Firebase Auth 상태 변화 리스너 (단순화)
                 console.log('Firebase Auth 상태 변화 리스너 설정');
-                let resolved = false;
                 
                 const unsubscribe = auth.onAuthStateChanged((user) => {
-                    if (resolved) return; // 이미 처리된 경우 무시
-                    
                     console.log('Auth 상태 변화 이벤트:', user ? user.email : 'null');
                     
                     if (user) {
@@ -298,7 +272,6 @@
                         sessionStorage.setItem('sustainx_admin_email', user.email);
                         sessionStorage.setItem('sustainx_admin_login_time', Date.now().toString());
                         
-                        resolved = true;
                         unsubscribe();
                         resolve(true);
                     } else {
@@ -308,28 +281,30 @@
                         sessionStorage.removeItem('sustainx_admin_email');
                         sessionStorage.removeItem('sustainx_admin_login_time');
                         
-                        resolved = true;
                         unsubscribe();
                         redirectToHome();
                         resolve(false);
                     }
                 });
                 
-                // 10초 후 타임아웃 처리
+                // 5초 후 타임아웃 처리 (더 짧게)
                 setTimeout(() => {
-                    if (!resolved) {
-                        console.log('인증 체크 타임아웃 - 홈페이지로 리다이렉트');
-                        resolved = true;
-                        unsubscribe();
-                        redirectToHome();
-                        resolve(false);
-                    }
-                }, 10000);
+                    console.log('인증 체크 타임아웃 - 홈페이지로 리다이렉트');
+                    unsubscribe();
+                    redirectToHome();
+                    resolve(false);
+                }, 5000);
             });
         }
         
         // 홈페이지로 리다이렉트
         function redirectToHome() {
+            console.log('=== 홈페이지로 리다이렉트 ===');
+            console.log('인증 상태:', {
+                currentUser: auth?.currentUser,
+                sessionAuth: sessionStorage.getItem('sustainx_admin_logged_in'),
+                sessionEmail: sessionStorage.getItem('sustainx_admin_email')
+            });
             alert('관리자 로그인이 필요합니다.');
             window.location.href = 'index.html';
         }
@@ -363,14 +338,20 @@
             try {
                 console.log('DOMContentLoaded: 관리자 페이지 초기화 시작');
                 
-                // Firebase 초기화 대기
+                // Firebase 초기화 대기 (더 짧은 타임아웃)
                 if (!window.auth || !window.db) {
                     console.log('Firebase 초기화 대기 중...');
-                    await new Promise(resolve => {
+                    await new Promise((resolve, reject) => {
+                        let attempts = 0;
+                        const maxAttempts = 50; // 5초 대기
+                        
                         const checkFirebase = () => {
+                            attempts++;
                             if (window.auth && window.db) {
                                 console.log('Firebase 초기화 완료 확인');
                                 resolve();
+                            } else if (attempts >= maxAttempts) {
+                                reject(new Error('Firebase 초기화 타임아웃'));
                             } else {
                                 setTimeout(checkFirebase, 100);
                             }
