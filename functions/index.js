@@ -22,7 +22,10 @@ const sgMail = require('@sendgrid/mail');
 // });
 
 admin.initializeApp();
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+// Firebase Functions 환경변수 사용
+const runtimeConfig = functions.config();
+sgMail.setApiKey(runtimeConfig.sendgrid.api_key);
 
 exports.sendInquiryEmail = functions.firestore
   .document('inquiries/{inquiryId}')
