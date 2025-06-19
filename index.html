@@ -49,6 +49,9 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
+    <!-- 중요 이미지 preload - LCP 개선 -->
+    <link rel="preload" href="images/section/hero/hero-bg.webp" as="image">
+    
     <!-- PWA 메타 태그 -->
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
@@ -68,7 +71,7 @@
             padding: 0;
         }
         
-        /* 기본 폰트 설정 */
+        /* CLS 방지: 폰트 로딩 최적화 */
         html {
             font-size: 16px;
             -webkit-text-size-adjust: 100%;
@@ -85,6 +88,35 @@
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            /* CLS 방지: 폰트 크기 고정 */
+            font-size: 16px;
+        }
+        
+        /* CLS 방지: 네비게이션 높이 고정 */
+        .nav-blur {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 80px;
+            z-index: 50;
+            backdrop-filter: blur(10px);
+            background: rgba(10, 22, 40, 0.9);
+        }
+        
+        /* CLS 방지: Hero 섹션 크기 사전 정의 */
+        .hero-section {
+            min-height: 100vh;
+            width: 100%;
+            position: relative;
+            background-color: #0A1628; /* 백그라운드 이미지 로딩 전 색상 */
+        }
+        
+        /* CLS 방지: 이미지 크기 사전 정의 */
+        .bg-section {
+            min-height: 400px;
+            width: 100%;
+            position: relative;
+            background-color: #0A1628;
         }
         
         /* 기본 레이아웃 */
@@ -376,8 +408,8 @@
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PFJCC6BQ"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
-    <!-- 네비게이션 -->
-    <nav class="nav-blur fixed w-full z-50 py-4 px-6" role="navigation" aria-label="메인 네비게이션">
+    <!-- 네비게이션 - CLS 방지를 위해 높이 고정 -->
+    <nav class="nav-blur fixed w-full z-50 py-4 px-6" role="navigation" aria-label="메인 네비게이션" style="height: 80px;">
         <div class="container mx-auto flex justify-between items-center">
             <a href="/" class="brand-heading text-2xl" aria-label="sustainX 홈" style="display: inline-block;">
                 sustainX
@@ -407,9 +439,9 @@
     </div>
 
     <main id="main-content">
-        <!-- Hero Section -->
-        <section class="relative min-h-screen flex items-center bg-optimized lazy-bg rounded-none" 
-            data-bg="images/section/hero/hero-bg.webp">
+        <!-- Hero Section - CLS 방지를 위해 즉시 로딩 -->
+        <section class="hero-section relative min-h-screen flex items-center bg-cover bg-center bg-no-repeat" 
+            style="background-image: url('images/section/hero/hero-bg.webp');">
             <div class="absolute inset-0 bg-overlay rounded-none"></div>
             <div class="container mx-auto px-6 py-32 relative z-10">
                 <div class="max-w-3xl">
@@ -424,9 +456,9 @@
             </div>
         </section>
 
-        <!-- 이런 고민 있으시죠? -->
-        <div class="relative bg-optimized lazy-bg rounded-none" 
-            data-bg="images/section/diff/AdobeStock_1186836910.jpg">
+        <!-- 이런 고민 있으시죠? - CLS 방지 적용 -->
+        <div class="bg-section relative bg-cover bg-center bg-no-repeat" 
+            style="background-image: url('images/section/diff/diff-bg.webp');">
             <div class="absolute inset-0 bg-overlay rounded-none"></div>
             
             <section class="py-[300px] relative">
@@ -465,7 +497,7 @@
         </div>
 
         <!-- 현재 담당 중인 실무 영역 -->
-        <section id="about" class="py-20 relative bg-cover bg-center bg-no-repeat rounded-none"
+        <section id="about" class="bg-section py-20 relative bg-cover bg-center bg-no-repeat"
             style="background-image: url('images/section/process/process-bg.webp');">
             <div class="absolute inset-0 bg-gradient-to-b from-brand-blue/90 via-brand-blue/85 to-brand-blue/90 backdrop-blur-[1px] rounded-none"></div>
             <div class="container mx-auto px-6 relative">
@@ -605,7 +637,7 @@
         </section>
 
         <!-- Our Services + 이렇게 함께합니다 통합 섹션 -->
-        <div class="relative bg-cover bg-center bg-no-repeat rounded-none" 
+        <div class="bg-section relative bg-cover bg-center bg-no-repeat" 
             style="background-image: url('images/section/services/service-bg.webp');">
             <div class="absolute inset-0 bg-gradient-to-b from-brand-blue/85 via-brand-blue/80 to-brand-blue/85 backdrop-blur-[1px] rounded-none"></div>
             
@@ -711,7 +743,7 @@
         </div>
 
         <!-- Contact: 어떻게 시작할 것인가 -->
-        <section id="contact" class="relative bg-cover bg-center bg-no-repeat rounded-none" 
+        <section id="contact" class="bg-section relative bg-cover bg-center bg-no-repeat" 
             style="background-image: url('images/section/cta/cta-bg.webp');">
             <div class="absolute inset-0 bg-gradient-to-b from-brand-blue/85 via-brand-blue/80 to-brand-blue/85 backdrop-blur-[1px] rounded-none"></div>
             
