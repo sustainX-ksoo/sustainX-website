@@ -19,6 +19,51 @@
     <!-- 사파리 관련 메타 태그 -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- 구조화된 데이터 (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "sustainX",
+      "alternateName": "서스테인엑스",
+      "description": "ESG 업무대행 전문기업으로 기업의 지속가능경영을 지원합니다",
+      "url": "https://sustainx.co.kr",
+      "logo": "https://sustainx.co.kr/images/logo.png",
+      "sameAs": [
+        "https://sustainx.co.kr"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "areaServed": "KR",
+        "availableLanguage": "Korean"
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "KR",
+        "addressLocality": "대한민국"
+      },
+      "service": [
+        {
+          "@type": "Service",
+          "name": "ESG 업무대행",
+          "description": "온실가스 인벤토리, ESG 평가 대응, 책임광물 관리 등 전문 업무대행"
+        },
+        {
+          "@type": "Service",
+          "name": "ESG 컨설팅",
+          "description": "기업 맞춤형 ESG 전략 수립 및 실행 지원"
+        },
+        {
+          "@type": "Service",
+          "name": "공급망 ESG 관리",
+          "description": "협력사 ESG 현황 관리 및 통합 솔루션 제공"
+        }
+      ],
+      "keywords": "ESG, 업무대행, 온실가스, 인벤토리, 책임광물, 공급망관리, 자동차부품, 컨설팅"
+    }
+    </script>
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-touch-fullscreen" content="yes">
     
@@ -33,26 +78,27 @@
     <meta name="robots" content="index, follow">
     
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://sustainx-web.netlify.app/">
+    <link rel="canonical" href="https://sustainx.co.kr/">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://sustainx.co.kr/">
     <meta property="og:title" content="sustainX - ESG 업무대행 전문기업 | 지속가능한 비즈니스">
     <meta property="og:description" content="sustainX는 기업의 ESG 업무를 전문적으로 대행하는 업무대행 전문기업입니다. ESG 데이터 관리, 규제 대응, 성과평가, 보고서 작성을 전문가가 직접 처리해드립니다.">
-    <meta property="og:image" content="https://sustainx-web.netlify.app/images/og-image.jpg">
+    <meta property="og:image" content="https://sustainx.co.kr/images/og-image.jpg">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://sustainx.co.kr/">
     <meta property="twitter:title" content="sustainX - ESG 업무대행 전문기업 | 지속가능한 비즈니스">
     <meta property="twitter:description" content="sustainX는 기업의 ESG 업무를 전문적으로 대행하는 업무대행 전문기업입니다. ESG 데이터 관리, 규제 대응, 성과평가, 보고서 작성을 전문가가 직접 처리해드립니다.">
-    <meta property="twitter:image" content="https://sustainx-web.netlify.app/images/og-image.jpg">
+    <meta property="twitter:image" content="https://sustainx.co.kr/images/og-image.jpg">
     
     <!-- 기존 메타 태그들 -->
     <meta name="theme-color" content="#0A1628">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
     
     <!-- 중요 이미지 preload - LCP 개선 -->
     <link rel="preload" href="images/section/hero/hero-bg.webp" as="image">
@@ -347,6 +393,7 @@
             <div class="hidden md:flex space-x-8">
                 <a href="#about" class="nav-link">About</a>
                 <a href="#services" class="nav-link">Services</a>
+                <a href="blog.html" class="nav-link">Blog</a>
                 <a href="#contact" class="nav-link">Contact</a>
             </div>
             <button class="md:hidden mobile-menu-btn" aria-label="메뉴 열기" aria-expanded="false" aria-controls="mobile-menu">
@@ -363,6 +410,7 @@
             <div class="flex flex-col space-y-6">
                 <a href="#about" class="text-white text-xl font-montserrat">About</a>
                 <a href="#services" class="text-white text-xl font-montserrat">Services</a>
+                <a href="blog.html" class="text-white text-xl font-montserrat">Blog</a>
                 <a href="#contact" class="text-white text-xl font-montserrat">Contact</a>
             </div>
         </div>
