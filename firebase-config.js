@@ -9,28 +9,46 @@ const firebaseConfig = {
   measurementId: "G-MZY1MRWW3W"
 };
 
-// Firebase SDK가 이미 로드되어 있으므로 compat 버전 사용
-try {
-    // Firebase 초기화
-    firebase.initializeApp(firebaseConfig);
-    console.log('Firebase 초기화 성공');
-    
-    // Firebase 서비스 초기화
-    const db = firebase.firestore();
-    const auth = firebase.auth();
-    const analytics = firebase.analytics ? firebase.analytics() : null;
-    
-    // 글로벌 변수로 설정
-    window.db = db;
-    window.auth = auth;
-    window.analytics = analytics;
-    
-    console.log('Firebase 서비스 초기화 완료:', {
-        firestore: !!db,
-        auth: !!auth,
-        analytics: !!analytics
-    });
-    
-} catch (error) {
-    console.error('Firebase 초기화 오류:', error);
+// Firebase SDK 로드 대기 함수
+function initializeFirebase() {
+    // Firebase SDK가 로드되었는지 확인
+    if (typeof firebase === 'undefined') {
+        console.log('Firebase SDK 로드 대기 중...');
+        setTimeout(initializeFirebase, 100); // 100ms 후 재시도
+        return;
+    }
+
+    try {
+        // Firebase가 이미 초기화되었는지 확인
+        if (firebase.apps.length > 0) {
+            console.log('Firebase가 이미 초기화되어 있습니다');
+            // 기존 앱 사용
+            const app = firebase.app();
+            window.db = firebase.firestore();
+            window.auth = firebase.auth();
+            window.analytics = firebase.analytics ? firebase.analytics() : null;
+            return;
+        }
+
+        // Firebase 초기화
+        firebase.initializeApp(firebaseConfig);
+        console.log('✅ Firebase 초기화 성공');
+        
+        // Firebase 서비스 초기화
+        window.db = firebase.firestore();
+        window.auth = firebase.auth();
+        window.analytics = firebase.analytics ? firebase.analytics() : null;
+        
+        console.log('✅ Firebase 서비스 초기화 완료:', {
+            firestore: !!window.db,
+            auth: !!window.auth,
+            analytics: !!window.analytics
+        });
+        
+    } catch (error) {
+        console.error('❌ Firebase 초기화 오류:', error);
+    }
 }
+
+// Firebase 초기화 시작
+initializeFirebase();

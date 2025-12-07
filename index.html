@@ -364,19 +364,8 @@
             });
         }
         
-        // 문의 버튼 클릭 시 Firebase 로드
-        document.addEventListener('DOMContentLoaded', () => {
-            const inquiryBtn = document.getElementById('inquiry-btn');
-            if (inquiryBtn) {
-                inquiryBtn.addEventListener('click', loadFirebase, { once: true });
-            }
-            
-            // 관리자 링크 클릭 시 Firebase 로드
-            const adminLink = document.getElementById('admin-link');
-            if (adminLink) {
-                adminLink.addEventListener('click', loadFirebase, { once: true });
-            }
-        });
+        // Firebase는 모달 열릴 때 자동으로 로드됩니다
+        // inquiryBtn 이벤트 리스너는 body 끝부분에서 처리
     </script>
 </head>
 <body class="min-h-screen">
@@ -1149,7 +1138,7 @@
             }
         });
 
-        // 문의 접수 모달 기능
+        // 문의 접수 모달 기능 - 개선 버전
         const inquiryBtn = document.getElementById('inquiry-btn');
         const inquiryModal = document.getElementById('inquiry-modal');
         const successModal = document.getElementById('success-modal');
@@ -1157,35 +1146,65 @@
         const closeSuccess = document.getElementById('close-success');
         const inquiryForm = document.getElementById('inquiry-form');
 
-        // 모달 열기
-        inquiryBtn.addEventListener('click', () => {
+        // 모달 열기 함수
+        function openInquiryModal() {
+            // Firebase 로드 (처음에만)
+            if (!window.firebaseLoaded) {
+                loadFirebase();
+            }
+            
             inquiryModal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
-        });
+            // 첫 번째 입력 필드에 포커스
+            document.getElementById('company').focus();
+        }
 
-        // 모달 닫기
-        closeModal.addEventListener('click', () => {
+        // 모달 닫기 함수 (항상 폼 초기화)
+        function closeInquiryModal() {
             inquiryModal.classList.add('hidden');
             document.body.style.overflow = 'auto';
-        });
+            // 폼 완전 초기화
+            inquiryForm.reset();
+            document.getElementById('privacy').checked = false;
+        }
 
-        closeSuccess.addEventListener('click', () => {
+        // 성공 모달 닫기 함수
+        function closeSuccessModal() {
             successModal.classList.add('hidden');
             document.body.style.overflow = 'auto';
-        });
+        }
+
+        // 모달 열기 이벤트
+        inquiryBtn.addEventListener('click', openInquiryModal);
+
+        // X 버튼으로 모달 닫기
+        closeModal.addEventListener('click', closeInquiryModal);
+
+        // 성공 모달 닫기
+        closeSuccess.addEventListener('click', closeSuccessModal);
 
         // 모달 외부 클릭 시 닫기
         inquiryModal.addEventListener('click', (e) => {
             if (e.target === inquiryModal) {
-                inquiryModal.classList.add('hidden');
-                document.body.style.overflow = 'auto';
+                closeInquiryModal();
             }
         });
 
         successModal.addEventListener('click', (e) => {
             if (e.target === successModal) {
-                successModal.classList.add('hidden');
-                document.body.style.overflow = 'auto';
+                closeSuccessModal();
+            }
+        });
+
+        // ESC 키로 모달 닫기
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (!inquiryModal.classList.contains('hidden')) {
+                    closeInquiryModal();
+                }
+                if (!successModal.classList.contains('hidden')) {
+                    closeSuccessModal();
+                }
             }
         });
 
